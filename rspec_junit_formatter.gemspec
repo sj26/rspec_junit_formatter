@@ -9,12 +9,12 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/sj26/rspec_junit_formatter"
   s.summary     = "RSpec JUnit XML formatter"
   s.description = "RSpec results that Hudson can read."
- 
+
   s.required_rubygems_version = ">= 1.3.6"
- 
+
   s.add_dependency "rspec", "~> 2.0"
-  s.add_dependency "builder", "~> 2.1"
-  
+  s.add_dependency "builder"
+
   s.files        = Dir["lib/**/*"] + %w[README.md LICENSE]
   s.require_path = 'lib'
 end

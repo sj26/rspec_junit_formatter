@@ -12,7 +12,7 @@ Install the gem:
 
 Use it:
 
-    rspec --format RspecJunitFormatter --out rspec.xml
+    rspec --require RspecJunitFormatter  --out rspec.xml
 
 You'll get an XML file with your results in it.
 
@@ -22,7 +22,7 @@ Add it to your Gemfile if you're using [Bundler][bundler].
 
 In your .rspec, usually alongside another formatter, add:
 
-    --format JUnitFormatter
+    --format RspecJunitFormatter
     --out rspec.xml
 
 I use it with the excellent [Fuubar formatter][fuubar].

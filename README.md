@@ -12,7 +12,7 @@ Install the gem:
 
 Use it:
 
-    rspec --require RspecJunitFormatter  --out rspec.xml
+    rspec --format RspecJunitFormatter  --out rspec.xml
 
 You'll get an XML file with your results in it.
 

@@ -18,7 +18,7 @@ You'll get an XML file with your results in it.
 
 ## More Permanent Usage
 
-Add it to your Gemfile if you're using [Bundler][bundler].
+Add it to your Gemfile if you're using [Bundler][bundler]. Put it in the same groups as rspec.
 
 In your .rspec, usually alongside another formatter, add:
 

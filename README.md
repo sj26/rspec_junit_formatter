@@ -1,6 +1,6 @@
 # RSpec JUnit Formatter
 
-[RSpec][rspec] results that [Hudson][hudson] can read. Probably a few other CI servers, too.
+[RSpec][rspec] results that [Jenkins][jenkins] can read. Probably a few other CI servers, too.
 
 Inspired by the work of [Diego Souza][dsouza] on [RSpec Formatters][dsouza/rspec_formatters] after frustration with [CI Reporter][ci_reporter].
 
@@ -37,7 +37,7 @@ I use it with the excellent [Fuubar formatter][fuubar].
 The MIT License, see [LICENSE][license].
 
   [rspec]: http://rspec.info/
-  [hudson]: http://hudson-ci.org/
+  [jenkins]: http://jenkins-ci.org/
   [dsouza]: https://github.com/dsouza
   [dsouza/rspec_formatters]: https://github.com/dsouza/rspec_formatters
   [ci_reporter]: http://caldersphere.rubyforge.org/ci_reporter/

@@ -1,4 +1,9 @@
-require 'time'
+require "time"
+
+require "builder"
+require "rspec"
+
+require "rspec/core/formatters/base_formatter"
 
 # Dumps rspec results as a JUnit XML file.
 # Based on XML schema: http://windyroad.org/dl/Open%20Source/JUnit.xsd
@@ -16,7 +21,7 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
     super
 
     xml.instruct!
-    xml.testsuite :tests => example_count, :failures => failure_count, :errors => 0, :time => '%.6f' % duration, :timestamp => @start.iso8601 do
+    xml.testsuite :tests => example_count, :failures => failure_count, :errors => 0, :time => "%.6f" % duration, :timestamp => @start.iso8601 do
       xml.properties
       examples.each do |example|
         send :"dump_summary_example_#{example.execution_result[:status]}", example
@@ -25,7 +30,7 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
   end
 
   def xml_example example, &block
-    xml.testcase :classname => example.file_path, :name => example.full_description, :time => '%.6f' % example.execution_result[:run_time], &block
+    xml.testcase :classname => example.file_path, :name => example.full_description, :time => "%.6f" % example.execution_result[:run_time], &block
   end
 
   def dump_summary_example_passed example
@@ -46,6 +51,17 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
       xml.failure :message => exception.to_s, :type => exception.class.name do
         xml.cdata! "#{exception.message}\n#{backtrace.join "\n"}"
       end
+    end
+  end
+
+private
+
+  # Rspec 2.12 changes the signature of format_backtrace, so we
+  # presume the new version is in play unless we can check that
+  # the loaded gem version is below 2.12
+  if not defined? Gem or Gem.loaded_specs["rspec"].version >= Gem::Version.new("2.12")
+    def format_backtrace backtrace, example
+      super backtrace, example.metadata
     end
   end
 end

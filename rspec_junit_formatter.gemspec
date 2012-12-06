@@ -2,10 +2,10 @@
 
 Gem::Specification.new do |s|
   s.name        = "rspec_junit_formatter"
-  s.version     = "0.1.3"
+  s.version     = "0.1.4"
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Samuel Cochran"]
-  s.email       = ["sj26@sj26.com"]
+  s.author      = "Samuel Cochran"
+  s.email       = "sj26@sj26.com"
   s.homepage    = "http://github.com/sj26/rspec_junit_formatter"
   s.summary     = "RSpec JUnit XML formatter"
   s.description = "RSpec results that Hudson can read."
@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.add_dependency "builder"
 
   s.files        = Dir["lib/**/*"] + %w[README.md LICENSE]
-  s.require_path = 'lib'
+  s.require_path = "lib"
 end

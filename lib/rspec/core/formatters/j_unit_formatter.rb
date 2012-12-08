@@ -50,6 +50,7 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
   end
 
   def classname example
+    example = example[Dir.pwd.length+1..-1] if example.start_with? Dir.pwd
     example.gsub /\./, '_'
   end
 

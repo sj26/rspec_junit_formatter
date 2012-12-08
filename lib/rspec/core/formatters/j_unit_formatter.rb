@@ -25,7 +25,7 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
   end
 
   def xml_example example, &block
-    xml.testcase :classname => example.file_path, :name => example.full_description, :time => '%.6f' % example.execution_result[:run_time], &block
+    xml.testcase :classname => classname(example.file_path), :name => example.full_description, :time => '%.6f' % example.execution_result[:run_time], &block
   end
 
   def dump_summary_example_passed example
@@ -48,4 +48,10 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
       end
     end
   end
+
+  def classname example
+    example = example[Dir.pwd.length+1..-1] if example.start_with? Dir.pwd
+    example.gsub /\./, '_'
+  end
+
 end

@@ -44,12 +44,18 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
 
     xml_example example do
       xml.failure :message => exception.to_s, :type => exception.class.name do
-        xml.cdata! "#{exception.message}\n#{backtrace.join "\n"}"
+        xml.cdata! "#{exception.message}\n#{backtrace.join "\n"}#{example_attachments(example)}"
       end
     end
   end
 
   def example_classname example
     example.file_path.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(%r{\A\.+|\.+\Z}, "")
+  end
+
+  def example_attachments example
+    if example.execution_result[:attachments]
+      "\n" << example.execution_result[:attachments].map { |filename| "[[ATTACHMENT|#{filename}]]" }.join("\n")
+    end
   end
 end

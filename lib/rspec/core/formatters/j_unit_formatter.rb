@@ -25,7 +25,7 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
   end
 
   def xml_example example, &block
-    xml.testcase :classname => example.file_path.gsub(".", "_"), :name => example.full_description, :time => '%.6f' % example.execution_result[:run_time], &block
+    xml.testcase :classname => example_classname(example), :name => example.full_description, :time => '%.6f' % example.execution_result[:run_time], &block
   end
 
   def dump_summary_example_passed example
@@ -47,5 +47,9 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
         xml.cdata! "#{exception.message}\n#{backtrace.join "\n"}"
       end
     end
+  end
+
+  def example_classname example
+    example.file_path.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(%r{\A\.+|\.+\Z}, "")
   end
 end

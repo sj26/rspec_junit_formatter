@@ -4,7 +4,7 @@ require 'time'
 # Based on XML schema: http://windyroad.org/dl/Open%20Source/JUnit.xsd
 class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   def xml
-    @xml ||= Builder::XmlMarkup.new :target => output, :indent => 2 
+    @xml ||= Builder::XmlMarkup.new :target => output, :indent => 2
   end
 
   def start example_count
@@ -24,8 +24,16 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
     end
   end
 
-  def xml_example example, &block
-    xml.testcase :classname => example_classname(example), :name => example.full_description, :time => '%.6f' % example.execution_result[:run_time], &block
+  def xml_example example
+    xml.testcase :classname => example_classname(example), :name => example.full_description, :time => '%.6f' % example.execution_result[:run_time] do
+      yield if block_given?
+
+      if example.execution_result[:attachments]
+        xml.tag! "system-out" do
+          xml.cdata! example.execution_result[:attachments].map { |filename| "[[ATTACHMENT|#{filename}]]" }.join("\n")
+        end
+      end
+    end
   end
 
   def dump_summary_example_passed example
@@ -44,18 +52,12 @@ class RSpec::Core::Formatters::JUnitFormatter < RSpec::Core::Formatters::BaseFor
 
     xml_example example do
       xml.failure :message => exception.to_s, :type => exception.class.name do
-        xml.cdata! "#{exception.message}\n#{backtrace.join "\n"}#{example_attachments(example)}"
+        xml.cdata! "#{exception.message}\n#{backtrace.join "\n"}"
       end
     end
   end
 
   def example_classname example
     example.file_path.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(%r{\A\.+|\.+\Z}, "")
-  end
-
-  def example_attachments example
-    if example.execution_result[:attachments]
-      "\n" << example.execution_result[:attachments].map { |filename| "[[ATTACHMENT|#{filename}]]" }.join("\n")
-    end
   end
 end

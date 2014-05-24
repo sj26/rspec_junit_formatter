@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
   s.add_dependency "rspec-core", "!= 2.12.0"
   s.add_dependency "builder"
 
+  s.add_development_dependency "nokogiri"
+
   s.files        = Dir["lib/**/*"] + %w[README.md LICENSE]
   s.require_path = "lib"
 end

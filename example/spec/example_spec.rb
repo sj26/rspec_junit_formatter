@@ -16,12 +16,4 @@ describe "some example specs" do
   it "should be pending" do
     pending
   end
-
-  after :each, :attachment do
-    example.execution_result[:attachments] ||= []
-    example.execution_result[:attachments] << __FILE__
-  end
-
-  it "should have an attachment", :attachment do
-  end
 end

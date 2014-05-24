@@ -1,5 +1,2 @@
---color
---format progress
-
 --format RspecJunitFormatter
 --out tmp/rspec.xml

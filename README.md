@@ -4,7 +4,7 @@
 
 [RSpec][rspec] results that [Jenkins][jenkins] can read. Probably a few other CI servers, too.
 
-Inspired by the work of [Diego Souza][dsouza] on [RSpec Formatters][dsouza/rspec_formatters] after frustration with [CI Reporter][ci_reporter].
+Inspired by the work of [Diego Souza][dgvncsz0f] on [RSpec Formatters][dgvncsz0f/rspec_formatters] after frustration with [CI Reporter][ci_reporter].
 
 ## Usage
 
@@ -40,8 +40,8 @@ The MIT License, see [LICENSE][license].
 
   [rspec]: http://rspec.info/
   [jenkins]: http://jenkins-ci.org/
-  [dsouza]: https://github.com/dsouza
-  [dsouza/rspec_formatters]: https://github.com/dsouza/rspec_formatters
+  [dgvncsz0f]: https://github.com/dgvncsz0f
+  [dgvncsz0f/rspec_formatters]: https://github.com/dgvncsz0f/rspec_formatters
   [ci_reporter]: http://caldersphere.rubyforge.org/ci_reporter/
   [bundler]: http://gembundler.com/
   [fuubar]: http://jeffkreeftmeijer.com/2010/fuubar-the-instafailing-rspec-progress-bar-formatter/

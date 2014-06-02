@@ -2,11 +2,11 @@ require "spec_helper"
 
 describe "some example specs" do
   it "should succeed" do
-    true.should be_true
+    expect(true).to be_truthy
   end
 
   it "should fail" do
-    false.should be_true
+    expect(false).to be_truthy
   end
 
   it "should raise" do
@@ -14,6 +14,6 @@ describe "some example specs" do
   end
 
   it "should be pending" do
-    pending
+    skip
   end
 end

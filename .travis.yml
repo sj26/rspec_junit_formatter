@@ -6,5 +6,4 @@ rvm:
 gemfile:
   - gemfiles/Gemfile.rspec2
   - gemfiles/Gemfile.rspec3
-cache: bundler
 script: bundle exec rspec

@@ -28,5 +28,5 @@ PLATFORMS
 
 DEPENDENCIES
   nokogiri (~> 1.6)
-  rspec (~> 2.14)
+  rspec (~> 2.14, < 2.99)
   rspec_junit_formatter!

@@ -10,15 +10,7 @@ require "rspec/core/formatters/base_formatter"
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   attr_reader :started
 
-  def start(example_count)
-    @started = Time.now
-    super
-  end
-
-  def dump_summary(duration, example_count, failure_count, pending_count)
-    super
-    xml_dump
-  end
+  # rspec 2 and 3 implements are in separate files.
 
 private
 
@@ -67,3 +59,7 @@ private
 end
 
 RspecJunitFormatter = RSpecJUnitFormatter
+
+if RSpec::Version::STRING.start_with? "2."
+  require "rspec_junit_formatter/rspec2"
+end

@@ -1,9 +1,9 @@
-require 'time'
+require "time"
 
-require 'builder'
-require 'rspec'
+require "builder"
+require "rspec"
 
-require 'rspec/core/formatters/base_formatter'
+require "rspec/core/formatters/base_formatter"
 
 # Dumps rspec results as a JUnit XML file.
 # Based on XML schema: http://windyroad.org/dl/Open%20Source/JUnit.xsd
@@ -21,7 +21,7 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
     super
 
     xml.instruct!
-    xml.testsuite :name => 'rspec', :tests => example_count, :failures => failure_count, :errors => 0, :time => '%.6f' % duration, :timestamp => @start.iso8601 do
+    xml.testsuite :name => "rspec", :tests => example_count, :failures => failure_count, :errors => 0, :time => "%.6f" % duration, :timestamp => @start.iso8601 do
       xml.properties
       examples.each do |example|
         send :"dump_summary_example_#{example.execution_result[:status]}", example
@@ -30,7 +30,7 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   end
 
   def xml_example example, &block
-    xml.testcase :classname => example_classname(example), :name => example.full_description, :time => '%.6f' % example.execution_result[:run_time], &block
+    xml.testcase :classname => example_classname(example), :name => example.full_description, :time => "%.6f" % example.execution_result[:run_time], &block
   end
 
   def dump_summary_example_passed example

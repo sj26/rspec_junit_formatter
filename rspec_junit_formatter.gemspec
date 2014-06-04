@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/sj26/rspec_junit_formatter"
   s.summary     = "RSpec JUnit XML formatter"
   s.description = "RSpec results that Hudson can read."
+  s.license     = "MIT"
 
   s.required_rubygems_version = ">= 1.3.6"
 

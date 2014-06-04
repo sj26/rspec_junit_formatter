@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ..
   specs:
     rspec_junit_formatter (0.1.6)
       builder

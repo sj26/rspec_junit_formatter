@@ -13,12 +13,12 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
 private
 
   def xml
-    @xml ||= Builder::XmlMarkup.new :target => output, :indent => 2
+    @xml ||= Builder::XmlMarkup.new target: output, indent: 2
   end
 
   def xml_dump
     xml.instruct!
-    xml.testsuite :name => "rspec", :tests => example_count, :failures => failure_count, :errors => 0, :time => "%.6f" % duration, :timestamp => started.iso8601 do
+    xml.testsuite name: "rspec", tests: example_count, failures: failure_count, errors: 0, time: "%.6f" % duration, timestamp: started.iso8601 do
       xml.properties
       xml_dump_examples
     end
@@ -45,14 +45,14 @@ private
     backtrace = formatted_backtrace_for(example)
 
     xml_dump_example(example) do
-      xml.failure :message => exception.to_s, :type => exception.class.name do
+      xml.failure message: exception.to_s, type: exception.class.name do
         xml.cdata! "#{exception.message}\n#{backtrace.join "\n"}"
       end
     end
   end
 
   def xml_dump_example(example, &block)
-    xml.testcase :classname => classname_for(example), :name => description_for(example), :time => "%.6f" % duration_for(example), &block
+    xml.testcase classname: classname_for(example), name: description_for(example), time: "%.6f" % duration_for(example), &block
   end
 end
 

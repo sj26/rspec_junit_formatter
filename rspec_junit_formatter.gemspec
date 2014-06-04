@@ -15,9 +15,9 @@ Gem::Specification.new do |s|
   s.add_dependency "rspec", ">= 2", "< 4"
   # https://github.com/rspec/rspec-core/commit/f06254c00770387e3a8a2efbdbc973035c217f6a
   s.add_dependency "rspec-core", "!= 2.12.0"
-  s.add_dependency "builder"
+  s.add_dependency "builder", "< 4"
 
-  s.add_development_dependency "nokogiri"
+  s.add_development_dependency "nokogiri", "~> 1.6"
 
   s.files        = Dir["lib/**/*"] + %w[README.md LICENSE]
   s.require_path = "lib"

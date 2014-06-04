@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    rspec_junit_formatter (0.1.6)
-      builder
+    rspec_junit_formatter (0.2.0)
+      builder (< 4)
       rspec (>= 2, < 4)
       rspec-core (!= 2.12.0)
 
@@ -27,6 +27,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  nokogiri
+  nokogiri (~> 1.6)
   rspec (~> 2.14)
   rspec_junit_formatter!

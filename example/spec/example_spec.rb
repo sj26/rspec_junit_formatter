@@ -1,12 +1,10 @@
-require "spec_helper"
-
 describe "some example specs" do
   it "should succeed" do
-    true.should be_true
+    expect(true).to be_true
   end
 
   it "should fail" do
-    false.should be_true
+    expect(false).to be_true
   end
 
   it "should raise" do
@@ -14,6 +12,16 @@ describe "some example specs" do
   end
 
   it "should be pending" do
-    pending
+    if defined? skip
+      skip
+    else
+      pending
+    end
+  end
+
+  if instance_methods.include? :be_truthy
+    def be_true
+      be_truthy
+    end
   end
 end

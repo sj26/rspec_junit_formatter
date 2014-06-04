@@ -20,6 +20,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "nokogiri", "~> 1.6"
 
-  s.files        = Dir["lib/**/*"] + %w[README.md LICENSE]
+  s.files        = Dir["lib/**/*", "README.md", "LICENSE"]
   s.require_path = "lib"
 end

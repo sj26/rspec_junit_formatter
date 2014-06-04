@@ -24,7 +24,7 @@ private
   end
 
   def classname_for(example)
-    example.file_path.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(%r{\A\.+|\.+\Z}, "")
+    example.file_path.sub(%r{\.[^/.]+\Z}, "").gsub("/", ".").gsub(/\A\.+|\.+\Z/, "")
   end
 
   def duration_for(example)

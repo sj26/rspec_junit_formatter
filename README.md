@@ -42,7 +42,7 @@ The MIT License, see [LICENSE][license].
   [jenkins]: http://jenkins-ci.org/
   [dgvncsz0f]: https://github.com/dgvncsz0f
   [dgvncsz0f/rspec_formatters]: https://github.com/dgvncsz0f/rspec_formatters
-  [ci_reporter]: http://caldersphere.rubyforge.org/ci_reporter/
+  [ci_reporter]: https://github.com/nicksieger/ci_reporter
   [bundler]: http://gembundler.com/
   [fuubar]: http://jeffkreeftmeijer.com/2010/fuubar-the-instafailing-rspec-progress-bar-formatter/
   [license]: https://github.com/sj26/rspec-junit-formatter/blob/master/LICENSE

@@ -40,7 +40,7 @@ private
   end
 
   def result_of(notification)
-    notification.example.execution_result[:status]
+    notification.example.execution_result.status
   end
 
   def classname_for(notification)
@@ -48,7 +48,7 @@ private
   end
 
   def duration_for(notification)
-    notification.example.execution_result[:run_time]
+    notification.example.execution_result.run_time
   end
 
   def description_for(notification)
@@ -56,7 +56,7 @@ private
   end
 
   def exception_for(notification)
-    notification.example.execution_result[:exception]
+    notification.example.execution_result.exception
   end
 
   def formatted_backtrace_for(notification)

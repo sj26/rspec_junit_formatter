@@ -18,7 +18,7 @@ private
 
   def xml_dump
     xml.instruct!
-    xml.testsuite name: "rspec", tests: example_count, failures: failure_count, errors: 0, time: "%.6f" % duration, timestamp: started.iso8601 do
+    xml.testsuite name: suite_name, tests: example_count, failures: failure_count, errors: 0, time: "%.6f" % duration, timestamp: started.iso8601 do
       xml.properties
       xml_dump_examples
     end

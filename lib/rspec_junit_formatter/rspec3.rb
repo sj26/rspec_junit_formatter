@@ -23,6 +23,15 @@ private
 
   attr_reader :started
 
+  def suite_name
+    if @summary_notification.examples.length
+      example = @summary_notification.examples[0]
+      example.full_description.gsub(example.description, "").strip
+    else
+      ""
+    end
+  end
+
   def example_count
     @summary_notification.examples.count
   end

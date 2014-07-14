@@ -1,5 +1,3 @@
-require 'pp'
-
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   attr_reader :started
 
@@ -15,6 +13,15 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
 
 private
 
+  def suite_name
+    if examples.length
+      example = examples[0]
+      example.full_description.gsub(example.description, "").strip
+    else
+      ""
+    end
+  end
+
   def xml_dump_examples
     examples.each do |example|
       send :"xml_dump_#{example.execution_result[:status]}", example
@@ -26,7 +33,7 @@ private
   end
 
   def classname_for(example)
-    example.metadata[:example_group][:description_args].join(" ")
+    example.file_path.sub(%r{\.[^/.]+\Z}, "").gsub("/", ".").gsub(/\A\.+|\.+\Z/, "")
   end
 
   def duration_for(example)
@@ -34,7 +41,7 @@ private
   end
 
   def description_for(example)
-    example.full_description.replace(classname_for(example))
+    example.description
   end
 
   def exception_for(example)

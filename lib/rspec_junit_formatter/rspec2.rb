@@ -1,3 +1,5 @@
+require 'pp'
+
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   attr_reader :started
 
@@ -24,7 +26,7 @@ private
   end
 
   def classname_for(example)
-    example.file_path.sub(%r{\.[^/.]+\Z}, "").gsub("/", ".").gsub(/\A\.+|\.+\Z/, "")
+    example.metadata[:example_group][:description_args].join(" ")
   end
 
   def duration_for(example)
@@ -32,7 +34,7 @@ private
   end
 
   def description_for(example)
-    example.full_description
+    example.full_description.replace(classname_for(example))
   end
 
   def exception_for(example)

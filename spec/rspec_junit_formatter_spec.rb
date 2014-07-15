@@ -9,11 +9,11 @@ describe RspecJunitFormatter do
   let(:output_xml) { IO.read(output_path) }
   let(:output_doc) { Nokogiri::XML::Document.parse(output_xml) }
 
-  let(:root) { output_doc.xpath("/testsuite").first }
-  let(:testcases) { output_doc.xpath("/testsuite/testcase") }
-  let(:successful_testcases) { output_doc.xpath("/testsuite/testcase[count(*)=0]") }
-  let(:pending_testcases) { output_doc.xpath("/testsuite/testcase[skipped]") }
-  let(:failed_testcases) { output_doc.xpath("/testsuite/testcase[failure]") }
+  let(:root) { output_doc.xpath("/testsuites/testsuite").first }
+  let(:testcases) { output_doc.xpath("/testsuites/testsuite/testsuite/testcase") }
+  let(:successful_testcases) { output_doc.xpath("/testsuites/testsuite/testsuite/testcase[count(*)=0]") }
+  let(:pending_testcases) { output_doc.xpath("/testsuites/testsuite/testsuite/testcase[skipped]") }
+  let(:failed_testcases) { output_doc.xpath("/testsuites/testsuite/testsuite/testcase[failure]") }
 
   before(:all) do
     Dir.chdir EXAMPLE_DIR do

@@ -23,6 +23,10 @@ private
 
   attr_reader :started
 
+  def suite_name notification
+    notification.example.full_description.gsub(notification.example.description, "").strip
+  end
+
   def example_count
     @summary_notification.examples.count
   end
@@ -52,7 +56,7 @@ private
   end
 
   def description_for(notification)
-    notification.example.full_description
+    notification.example.description
   end
 
   def exception_for(notification)

@@ -13,10 +13,8 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
 
 private
 
-  def xml_dump_examples
-    examples.each do |example|
-      send :"xml_dump_#{example.execution_result[:status]}", example
-    end
+  def suite_name example
+    example.full_description.gsub(example.description, "").strip
   end
 
   def result_of(example)
@@ -32,7 +30,7 @@ private
   end
 
   def description_for(example)
-    example.full_description
+    example.description
   end
 
   def exception_for(example)

@@ -18,17 +18,45 @@ private
 
   def xml_dump
     xml.instruct!
-    xml.testsuite name: "rspec", tests: example_count, failures: failure_count, errors: 0, time: "%.6f" % duration, timestamp: started.iso8601 do
-      xml.properties
-      xml_dump_examples
+    xml.testsuites do
+      xml.testsuite name: "rspec", tests: example_count, failures: failure_count, errors: 0, time: "%.6f" % duration, timestamp: started.iso8601 do
+        xml.properties
+        xml_dump_suites
+      end
     end
   end
 
-  def xml_dump_examples
+  def xml_dump_suites
+    current_suite = nil
+    current_examples = []
     examples.each do |example|
+      current_suite ||= suite_name example
+      if current_suite != suite_name(example)
+        xml_dump_suite(current_examples, current_suite)
+
+        current_examples = []
+        current_suite = suite_name example
+
+      end
+      current_examples << example
+    end
+    xml_dump_suite(current_examples, current_suite)
+
+  end
+
+  def xml_dump_suite suite_examples, suite
+    return unless (suite_examples.length > 0)
+    xml.testsuite name: suite, tests: suite_examples.length do
+        xml_dump_examples suite_examples
+    end
+  end
+
+  def xml_dump_examples suite_examples
+    suite_examples.each do |example|
       send :"xml_dump_#{result_of(example)}", example
     end
   end
+
 
   def xml_dump_passed(example)
     xml_dump_example(example)

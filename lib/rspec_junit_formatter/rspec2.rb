@@ -23,8 +23,17 @@ private
     example.execution_result[:status]
   end
 
+  def example_group_file_path_for(example)
+    meta = example.metadata
+    while meta[:example_group]
+      meta = meta[:example_group]
+    end
+    meta[:file_path]
+  end
+
   def classname_for(example)
-    example.file_path.sub(%r{\.[^/.]+\Z}, "").gsub("/", ".").gsub(/\A\.+|\.+\Z/, "")
+    fp = example_group_file_path_for(example)
+    fp.sub(%r{\.[^/.]+\Z}, "").gsub("/", ".").gsub(/\A\.+|\.+\Z/, "")
   end
 
   def duration_for(example)

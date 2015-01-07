@@ -17,6 +17,7 @@ describe RspecJunitFormatter do
 
   before(:all) do
     Dir.chdir EXAMPLE_DIR do
+      ENV['TEST_ENV_NUMBER'] = '2'
       system "bundle", "exec", "rspec"
     end
   end
@@ -26,6 +27,7 @@ describe RspecJunitFormatter do
 
     expect(root.name).to eq "testsuite"
 
+    expect(root["name"]).to eq "rspec2"
     expect(root["tests"]).to eq "4"
     expect(root["failures"]).to eq "2"
     expect(root["errors"]).to eq "0"

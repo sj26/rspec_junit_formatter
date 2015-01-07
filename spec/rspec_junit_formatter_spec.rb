@@ -10,6 +10,7 @@ describe RspecJunitFormatter do
   let(:output_doc) { Nokogiri::XML::Document.parse(output_xml) }
 
   let(:root) { output_doc.xpath("/testsuite").first }
+  let(:seed_comment) { output_doc.xpath("/testsuite/comment()").first }
   let(:testcases) { output_doc.xpath("/testsuite/testcase") }
   let(:successful_testcases) { output_doc.xpath("/testsuite/testcase[count(*)=0]") }
   let(:pending_testcases) { output_doc.xpath("/testsuite/testcase[skipped]") }
@@ -78,5 +79,9 @@ describe RspecJunitFormatter do
       expect(child["message"]).not_to be_empty
       expect(child.text.strip).not_to be_empty
     end
+  end
+
+  it "has a comment with seed info" do
+    expect(seed_comment.to_s).to match /randomized with seed \d/i
   end
 end

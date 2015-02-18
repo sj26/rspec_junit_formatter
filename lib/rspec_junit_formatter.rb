@@ -1,8 +1,7 @@
 require "time"
-
 require "builder"
-require "rspec"
 
+require "rspec/core/version"
 require "rspec/core/formatters/base_formatter"
 
 # Dumps rspec results as a JUnit XML file.
@@ -59,8 +58,8 @@ end
 
 RspecJunitFormatter = RSpecJUnitFormatter
 
-if RSpec::Version::STRING.start_with? "3."
+if RSpec::Core::Version::STRING.start_with? "3."
   require "rspec_junit_formatter/rspec3"
-else RSpec::Version::STRING.start_with? "2."
+else RSpec::Core::Version::STRING.start_with? "2."
   require "rspec_junit_formatter/rspec2"
 end

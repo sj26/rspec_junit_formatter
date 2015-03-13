@@ -69,6 +69,6 @@ private
   end
 
   def formatted_backtrace_for(notification)
-    backtrace = notification.formatted_backtrace
+    notification.formatted_backtrace
   end
 end

@@ -4,6 +4,8 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
     :stop,
     :dump_summary
 
+  attr_reader :started
+
   def start(notification)
     @start_notification = notification
     @started = Time.now
@@ -20,8 +22,6 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   end
 
 private
-
-  attr_reader :started
 
   def example_count
     @summary_notification.examples.count

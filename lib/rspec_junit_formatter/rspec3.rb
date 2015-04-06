@@ -2,12 +2,18 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   RSpec::Core::Formatters.register self,
     :start,
     :stop,
+    :seed,
     :dump_summary
 
   def start(notification)
     @start_notification = notification
     @started = Time.now
     super
+  end
+
+  def seed(notification)
+    return unless notification.seed_used?
+    STDERR.puts notification.fully_formatted
   end
 
   def stop(notification)

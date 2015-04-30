@@ -2,4 +2,4 @@ source "https://rubygems.org"
 
 gemspec :path => ".."
 
-gem "rspec", "~> 3.0"
+gem "rspec", "~> 3.0.0"

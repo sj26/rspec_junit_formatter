@@ -43,8 +43,17 @@ private
     notification.example.execution_result.status
   end
 
+  def example_group_file_path_for(notification)
+    meta = notification.example.metadata
+    while meta[:example_group]
+      meta = meta[:example_group]
+    end
+    meta[:file_path]
+  end
+
   def classname_for(notification)
-    notification.example.file_path.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(%r{\A\.+|\.+\Z}, "")
+    fp = example_group_file_path_for(notification)
+    fp.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(%r{\A\.+|\.+\Z}, "")
   end
 
   def duration_for(notification)

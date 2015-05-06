@@ -1,7 +1,7 @@
 require "time"
 require "builder"
 
-require "rspec/core/version"
+require "rspec/core"
 require "rspec/core/formatters/base_formatter"
 
 # Dumps rspec results as a JUnit XML file.

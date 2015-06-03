@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    rspec_junit_formatter (0.2.2)
+    rspec_junit_formatter (0.2.3)
       builder (< 4)
       rspec-core (>= 2, < 4, != 2.12.0)
 

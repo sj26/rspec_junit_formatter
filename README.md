@@ -19,16 +19,27 @@ Use it:
 
 You'll get an XML file with your results in it.
 
-## More Permanent Usage
+## Permanent Usage
 
-Add it to your Gemfile if you're using [Bundler][bundler]. Put it in the same groups as rspec.
-
-In your .rspec, usually alongside another formatter, add:
-
-    --format RspecJunitFormatter
-    --out rspec.xml
-
+Add it to your Gemfile if you're using [Bundler][bundler]. Put it in the same groups as rspec. 
 I use it with the excellent [Fuubar formatter][fuubar].
+
+### Single process testing
+
+In your `.rspec`, usually alongside another formatter, add:
+
+```ruby
+ --format RspecJunitFormatter
+ --out rspec.xml
+ ```
+
+### Parallel tests
+
+For use with `parallel_tests`, be sure to use the `TEST_ENV_NUMBER` in the output file option (in `.rspec` or `.rspec_parallel`) to avoid concurrent process write conflicts.
+```ruby
+--format RspecJunitFormatter
+--out tmp/rspec<%= ENV['TEST_ENV_NUMBER'] %>.xml
+```
 
 ## Roadmap
 

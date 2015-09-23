@@ -10,7 +10,7 @@ describe RspecJunitFormatter do
   let(:output_doc) { Nokogiri::XML::Document.parse(output_xml) }
 
   let(:root) { output_doc.xpath("/testsuite").first }
-  let(:seed_comment) { output_doc.xpath("/testsuite/comment()").first }
+  let(:seed_comment) { output_doc.xpath("/testsuite/properties/property").first }
   let(:testcases) { output_doc.xpath("/testsuite/testcase") }
   let(:successful_testcases) { output_doc.xpath("/testsuite/testcase[count(*)=0]") }
   let(:pending_testcases) { output_doc.xpath("/testsuite/testcase[skipped]") }
@@ -82,6 +82,7 @@ describe RspecJunitFormatter do
   end
 
   it "has a comment with seed info" do
-    expect(seed_comment.to_s).to match /randomized with seed \d/i
+    expect(seed_comment['name']).to eq 'seed'
+    expect(seed_comment['value']).to match /\d+/
   end
 end

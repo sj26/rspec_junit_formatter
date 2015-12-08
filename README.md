@@ -28,7 +28,9 @@ In your .rspec, usually alongside another formatter, add:
     --format RspecJunitFormatter
     --out rspec.xml
 
-I use it with the excellent [Fuubar formatter][fuubar].
+You can use it in combination with other formatters:
+
+    rspec --format progress --format RspecJunitFormatter --out rspec.xml
 
 ## Roadmap
 

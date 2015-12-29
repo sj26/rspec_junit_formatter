@@ -51,4 +51,8 @@ private
   def formatted_backtrace_for(example)
     format_backtrace exception_for(example).backtrace, example
   end
+
+  def line_number_for(example)
+    example.metadata[:line_number]
+  end
 end

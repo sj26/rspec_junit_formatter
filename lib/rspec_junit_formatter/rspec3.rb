@@ -67,4 +67,8 @@ private
   def formatted_backtrace_for(notification)
     notification.formatted_backtrace
   end
+
+  def line_number_for(notification)
+    notification.example.metadata[:line_number]
+  end
 end

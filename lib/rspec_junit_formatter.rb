@@ -42,13 +42,18 @@ private
 
   def xml_dump_failed(example)
     exception = exception_for(example)
-    backtrace = formatted_backtrace_for(example)
 
     xml_dump_example(example) do
       xml.failure message: exception.to_s, type: exception.class.name do
-        xml.cdata! "#{exception.message}\n#{backtrace.join "\n"}"
+        xml.cdata! text_for_failing_example(example)
       end
     end
+  end
+
+  def text_for_failing_example(example)
+    exception = exception_for(example)
+    backtrace = formatted_backtrace_for(example)
+    "#{exception.message}\n#{backtrace.join "\n"}"
   end
 
   def xml_dump_example(example, &block)

@@ -41,24 +41,33 @@ private
   end
 
   def xml_dump_failed(example)
+    @failure_index = (@failure_index || 0) + 1
     exception = exception_for(example)
 
     xml_dump_example(example) do
       xml.failure message: exception.to_s, type: exception.class.name do
-        xml.cdata! text_for_failing_example(example)
+        xml.cdata! fully_formatted_failure_for(@failure_index, example)
       end
     end
   end
 
-  def text_for_failing_example(example)
-    exception = exception_for(example)
-    backtrace = formatted_backtrace_for(example)
+if ["2.", "3.0", "3.1" ].any?{|v| RSpec::Core::Version::STRING.start_with? v }
+  def fully_formatted_failure_for(index, notification)
+    exception = exception_for(notification)
+    backtrace = formatted_backtrace_for(notification)
     "#{exception.message}\n#{backtrace.join "\n"}"
   end
+else
+  def fully_formatted_failure_for(index, notification)
+    notification.fully_formatted(index, RSpec::Core::Notifications::NullColorizer)
+  end
+end
 
   def xml_dump_example(example, &block)
     xml.testcase classname: classname_for(example), name: description_for(example), file: example_group_file_path_for(example), time: "%.6f" % duration_for(example), &block
   end
+
+
 end
 
 RspecJunitFormatter = RSpecJUnitFormatter

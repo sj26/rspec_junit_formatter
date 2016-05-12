@@ -51,15 +51,15 @@ private
     end
   end
 
-if ["2.", "3.0", "3.1" ].any?{|v| RSpec::Core::Version::STRING.start_with? v }
+if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.2")
+  def fully_formatted_failure_for(index, notification)
+    notification.fully_formatted(index, RSpec::Core::Notifications::NullColorizer)
+  end
+else
   def fully_formatted_failure_for(index, notification)
     exception = exception_for(notification)
     backtrace = formatted_backtrace_for(notification)
     "#{exception.message}\n#{backtrace.join "\n"}"
-  end
-else
-  def fully_formatted_failure_for(index, notification)
-    notification.fully_formatted(index, RSpec::Core::Notifications::NullColorizer)
   end
 end
 

@@ -20,14 +20,13 @@ describe "Shared spec" do
     end
   end
 
-  it "failed test case includes reference to failure line and original including line" do
+  it "failed test case includes reference to failure line and original including line when supported" do
     expect(failed_testcases.size).to be 1 # otherwise, we have to find the specific one in multiple, potentially random
     failure_element = failed_testcases.first.element_children.first
     expect(failure_element.text).to include("spec/shared.rb:5")
-    if ["2.", "3.0", "3.1"].any?{|v|RSpec::Core::Version::STRING.start_with?(v)}
-      pending "no shared-example reporting below 3.2"
+    if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.2")
+      expect(failure_element.text).to include("spec/shared_including_spec.rb:7")
     end
-    expect(failure_element.text).to include("spec/shared_including_spec.rb:7")
   end
 
 end

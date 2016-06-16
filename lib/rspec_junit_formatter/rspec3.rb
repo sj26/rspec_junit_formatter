@@ -27,6 +27,14 @@ private
     @summary_notification.examples.count
   end
 
+  def pending_count
+    @summary_notification.pending_examples.count
+  end
+
+  def test_count
+    example_count - pending_count
+  end
+
   def failure_count
     @summary_notification.failed_examples.count
   end

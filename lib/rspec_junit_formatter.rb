@@ -17,7 +17,7 @@ private
 
   def xml_dump
     xml.instruct!
-    xml.testsuite name: "rspec#{ENV['TEST_ENV_NUMBER']}", tests: example_count, failures: failure_count, errors: 0, time: "%.6f" % duration, timestamp: started.iso8601 do
+    xml.testsuite name: "rspec#{ENV['TEST_ENV_NUMBER']}", tests: test_count, pending: pending_count, failures: failure_count, errors: 0, time: "%.6f" % duration, timestamp: started.iso8601 do
       xml.comment! "Randomized with seed #{RSpec.configuration.seed}"
       xml.properties
       xml_dump_examples

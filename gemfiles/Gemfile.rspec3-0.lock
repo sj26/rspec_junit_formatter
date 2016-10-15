@@ -10,21 +10,21 @@ GEM
   specs:
     builder (3.2.2)
     diff-lcs (1.2.5)
-    mini_portile (0.6.0)
-    nokogiri (1.6.2.1)
-      mini_portile (= 0.6.0)
+    mini_portile2 (2.1.0)
+    nokogiri (1.6.8.1)
+      mini_portile2 (~> 2.1.0)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
       rspec-mocks (~> 3.0.0)
-    rspec-core (3.0.0)
+    rspec-core (3.0.4)
       rspec-support (~> 3.0.0)
-    rspec-expectations (3.0.0)
+    rspec-expectations (3.0.4)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.0.0)
-    rspec-mocks (3.0.0)
+    rspec-mocks (3.0.4)
       rspec-support (~> 3.0.0)
-    rspec-support (3.0.0)
+    rspec-support (3.0.4)
 
 PLATFORMS
   ruby
@@ -33,3 +33,6 @@ DEPENDENCIES
   nokogiri (~> 1.6)
   rspec (~> 3.0.0)
   rspec_junit_formatter!
+
+BUNDLED WITH
+   1.13.1

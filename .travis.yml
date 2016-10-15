@@ -8,7 +8,11 @@ rvm:
   - 2.0.0
   - 1.9.3
 gemfile:
-  - gemfiles/Gemfile.rspec2
+  - gemfiles/Gemfile.rspec2-x
   - gemfiles/Gemfile.rspec3-0
   - gemfiles/Gemfile.rspec3-1
+  - gemfiles/Gemfile.rspec3-2
+  - gemfiles/Gemfile.rspec3-3
+  - gemfiles/Gemfile.rspec3-4
+  - gemfiles/Gemfile.rspec3-5
 script: bundle exec rspec

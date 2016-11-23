@@ -53,7 +53,7 @@ private
   end
 
   def xml_dump_example(example, &block)
-    xml.testcase classname: classname_for(example), name: description_for(example), file: example_group_file_path_for(example), time: "%.6f" % duration_for(example), &block
+    xml.testcase classname: classname_for(example), name: description_for(example), file: example_group_file_path_for(example), line_number: line_number_for(example), time: "%.6f" % duration_for(example), &block
   end
 end
 

@@ -15,6 +15,7 @@ describe RspecJunitFormatter do
   let(:successful_testcases) { output_doc.xpath("/testsuite/testcase[count(*)=0]") }
   let(:pending_testcases) { output_doc.xpath("/testsuite/testcase[skipped]") }
   let(:failed_testcases) { output_doc.xpath("/testsuite/testcase[failure]") }
+  let(:shared_example_testcases) { output_doc.xpath("/testsuite/testcase[contains(@name, 'shared example')]") }
 
   before(:all) do
     Dir.chdir EXAMPLE_DIR do
@@ -29,7 +30,7 @@ describe RspecJunitFormatter do
     expect(root.name).to eq "testsuite"
 
     expect(root["name"]).to eq "rspec2"
-    expect(root["tests"]).to eq "4"
+    expect(root["tests"]).to eq "5"
     expect(root["failures"]).to eq "2"
     expect(root["errors"]).to eq "0"
     expect(Time.parse(root["timestamp"])).to be_within(60).of(Time.now)
@@ -37,7 +38,7 @@ describe RspecJunitFormatter do
   end
 
   it "has some test cases" do
-    expect(testcases.size).to eq 4
+    expect(testcases.size).to eq 5
 
     testcases.each do |testcase|
       expect(testcase["classname"]).not_to be_empty
@@ -46,12 +47,13 @@ describe RspecJunitFormatter do
     end
   end
 
-  it "has a successful test case" do
-    expect(successful_testcases.size).to be 1
+  it "has some successful test cases" do
+    expect(successful_testcases.size).to be 2
 
-    testcase = successful_testcases.first
-    expect(testcase).not_to be_nil
-    expect(testcase.children).to be_empty
+    successful_testcases.each do |testcase|
+      expect(testcase).not_to be_nil
+      expect(testcase.children).to be_empty
+    end
   end
 
   it "has a pending test case" do
@@ -78,6 +80,15 @@ describe RspecJunitFormatter do
       expect(child.name).to eq "failure"
       expect(child["message"]).not_to be_empty
       expect(child.text.strip).not_to be_empty
+    end
+  end
+
+  context "shared examples" do
+    it "attributes the example to the top level example group" do
+      expect(shared_example_testcases.size).to be 1
+
+      testcase = shared_example_testcases.first
+      expect(testcase["file"]).to match /spec\/example_spec\.rb/
     end
   end
 

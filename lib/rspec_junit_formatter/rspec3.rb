@@ -44,7 +44,7 @@ private
   end
 
   def example_group_file_path_for(notification)
-    notification.example.example_group.file_path
+    notification.example.example_group.parent_groups.last.file_path
   end
 
   def classname_for(notification)

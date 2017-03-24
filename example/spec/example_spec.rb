@@ -1,3 +1,5 @@
+require_relative "shared_examples"
+
 describe "some example specs" do
   it "should succeed" do
     expect(true).to be_true
@@ -18,6 +20,8 @@ describe "some example specs" do
       pending
     end
   end
+
+  include_examples "shared examples"
 
   if instance_methods.include? :be_truthy
     def be_true

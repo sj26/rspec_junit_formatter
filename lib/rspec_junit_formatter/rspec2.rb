@@ -13,12 +13,6 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
 
 private
 
-  def xml_dump_examples
-    examples.each do |example|
-      send :"xml_dump_#{result_of(example)}", example
-    end
-  end
-
   def result_of(example)
     example.execution_result[:status]
   end

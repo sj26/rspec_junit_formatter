@@ -6,7 +6,6 @@ rvm:
   - 2.3
   - 2.2
   - 2.1
-  - 2.0
 gemfile:
   - gemfiles/Gemfile.rspec2-x
   - gemfiles/Gemfile.rspec3-0

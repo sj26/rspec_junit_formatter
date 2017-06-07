@@ -7,7 +7,6 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    builder (3.2.2)
     diff-lcs (1.2.5)
     mini_portile2 (2.2.0)
     nokogiri (1.8.0)

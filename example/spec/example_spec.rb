@@ -19,6 +19,18 @@ describe "some example specs" do
     end
   end
 
+  it "can include unicodes 😁" do
+    expect("🚀").to eql("🔥")
+  end
+
+  it %{escapes <html tags='correctly' and="such &amp; such">} do
+    expect("<p>This is important</p>").to eql("<p>This is <strong>very</strong> important</p>")
+  end
+
+  it "escapes naughty \0 characters" do
+    expect("\0\0\0").to eql("emergency services")
+  end
+
   if instance_methods.include? :be_truthy
     def be_true
       be_truthy

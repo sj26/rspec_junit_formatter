@@ -3,7 +3,7 @@
 [![Build results](http://img.shields.io/travis/sj26/rspec_junit_formatter/master.svg)](https://travis-ci.org/sj26/rspec_junit_formatter) 
 [![Gem version](http://img.shields.io/gem/v/rspec_junit_formatter.svg)](https://rubygems.org/gems/rspec_junit_formatter)
 
-[RSpec][rspec] 2 & 3 results that [Jenkins][jenkins] can read. Probably a few other CI servers, too.
+[RSpec][rspec] 2 & 3 results that [Jenkins][jenkins] can read. Probably a few other CI services, too.
 
 Inspired by the work of [Diego Souza][dgvncsz0f] on [RSpec Formatters][dgvncsz0f/rspec_formatters] after frustration with [CI Reporter][ci_reporter].
 
@@ -11,37 +11,55 @@ Inspired by the work of [Diego Souza][dgvncsz0f] on [RSpec Formatters][dgvncsz0f
 
 Install the gem:
 
-    gem install rspec_junit_formatter
+```sh
+gem install rspec_junit_formatter
+```
 
 Use it:
 
-    rspec --format RspecJunitFormatter  --out rspec.xml
+```sh
+rspec --format RspecJunitFormatter --out rspec.xml
+```
 
-You'll get an XML file with your results in it.
+You'll get an XML file `rspec.xml` with your results in it.
 
-## More Permanent Usage
+You can use it in combination with other [formatters][rspec-formatters], too:
+
+```sh
+rspec --format progress --format RspecJunitFormatter --out rspec.xml
+```
+
+### Using in your project with Bundler
 
 Add it to your Gemfile if you're using [Bundler][bundler]. Put it in the same groups as rspec.
 
-In your .rspec, usually alongside another formatter, add:
+```ruby
+group :test do
+  gem "rspec"
+  gem "rspec_junit_formatter"
+end
+```
 
-    --format RspecJunitFormatter
-    --out rspec.xml
+Put the same arguments as the commands above in [your `.rspec`][rspec-file]:
 
-You can use it in combination with other formatters:
-
-    rspec --format progress --format RspecJunitFormatter --out rspec.xml
+```
+--format RspecJunitFormatter
+--out rspec.xml
+```
 
 ## Roadmap
 
- * It would be nice to split things up into individual test suites, although would this correspond to example groups? The subject? The spec file? Not sure yet.
- * This would sit nicely in rspec-core, and has been designed to do so.
+ * It would be nice to split things up into individual test suites, although
+   would this correspond to example groups? The subject? The spec file? Not
+   sure yet.
 
 ## License
 
 The MIT License, see [LICENSE][license].
 
   [rspec]: http://rspec.info/
+  [rspec-formatters]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/formatters
+  [rspec-file]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/configuration/read-command-line-configuration-options-from-files
   [jenkins]: http://jenkins-ci.org/
   [dgvncsz0f]: https://github.com/dgvncsz0f
   [dgvncsz0f/rspec_formatters]: https://github.com/dgvncsz0f/rspec_formatters

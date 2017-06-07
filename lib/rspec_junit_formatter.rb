@@ -59,8 +59,8 @@ end
 
 RspecJunitFormatter = RSpecJUnitFormatter
 
-if RSpec::Core::Version::STRING.start_with? "3."
-  require "rspec_junit_formatter/rspec3"
-else RSpec::Core::Version::STRING.start_with? "2."
+if RSpec::Core::Version::STRING.start_with? "2."
   require "rspec_junit_formatter/rspec2"
+else
+  require "rspec_junit_formatter/rspec3"
 end

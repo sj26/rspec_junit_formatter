@@ -42,10 +42,21 @@ end
 
 Put the same arguments as the commands above in [your `.rspec`][rspec-file]:
 
-```
+```sh
 --format RspecJunitFormatter
 --out rspec.xml
 ```
+
+### Parallel tests
+
+For use with `parallel_tests`, add `$TEST_ENV_NUMBER` in the output file option (in `.rspec` or `.rspec_parallel`) to avoid concurrent process write conflicts.
+
+```sh
+--format RspecJunitFormatter
+--out tmp/rspec<%= ENV["TEST_ENV_NUMBER"] %>.xml
+```
+
+The formatter includes `$TEST_ENV_NUMBER` in the test suite name within the XML, too.
 
 ## Roadmap
 

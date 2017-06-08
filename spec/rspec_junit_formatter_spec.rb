@@ -96,11 +96,21 @@ describe RspecJunitFormatter do
 
     # it correctly escapes invalid xml characters
 
-    expect(output).to include("escapes naughty &#0; characters")
+    # XML parsers seem to vary in support for parsing control codes, even as
+    # fully escaped entities. We make a best effort to encode, but the parse
+    # may throw them away. So here we'll only test that they appears in markup,
+    # not in the parsed document.
+    #
+    #expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs escapes naughty \0 characters")
+    expect(output).to include("escapes naughty &#x0; characters")
+
+    # it correctly escapes emoji characters
+
+    expect(doc.xpath("//testcase[contains(@name, 'unicodes')]").first[:name]).to eql("some example specs can include unicodes \u{1f601}")
 
     # it correctly escapes reserved xml characters
 
-    expect(output).to include("escapes &lt;html tags=&apos;correctly&apos; and=&quot;such &amp;amp; such&quot;&gt;")
+    expect(doc.xpath("//testcase[contains(@name, 'html')]").first[:name]).to eql(%{some example specs escapes <html tags='correctly' and="such &amp; such">})
   end
 
   context "when $TEST_ENV_NUMBER is set" do

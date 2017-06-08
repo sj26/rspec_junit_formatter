@@ -102,7 +102,7 @@ private
   )
 
   # Translate well-known entities, or use generic unicode hex entity
-  ESCAPE_ENTITY = Hash.new { |_, c| "&##{c.ord.to_s(16)};".freeze }.update(
+  ESCAPE_ENTITY = Hash.new { |_, c| "&#x#{c.ord.to_s(16)};".freeze }.update(
     ?" => "&quot;".freeze,
     ?& => "&amp;".freeze,
     ?' => "&apos;".freeze,

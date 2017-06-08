@@ -44,7 +44,11 @@ private
   end
 
   def example_group_file_path_for(notification)
-    notification.example.example_group.file_path
+    metadata = notification.example.metadata[:example_group]
+    while parent_metadata = metadata[:parent_example_group]
+      metadata = parent_metadata
+    end
+    metadata[:file_path]
   end
 
   def classname_for(notification)

@@ -40,7 +40,7 @@ describe RspecJunitFormatter do
     expect(testcases.size).to eql(9)
 
     testcases.each do |testcase|
-      expect(testcase["classname"]).not_to be_empty
+      expect(testcase["classname"]).to eql("spec.example_spec")
       expect(testcase["name"]).not_to be_empty
       expect(testcase["time"].to_f).to be > 0
     end
@@ -83,6 +83,11 @@ describe RspecJunitFormatter do
     # it has shared test cases which list both the inclusion and included files
 
     expect(shared_testcases.size).to eql(2)
+    shared_testcases.each do |testcase|
+      # shared examples should be groups with their including files
+      expect(testcase["classname"]).to eql("spec.example_spec")
+    end
+
     expect(failed_shared_testcases.size).to eql(1)
     failed_shared_testcases.each do |testcase|
       expect(testcase.text).to include("example_spec.rb")

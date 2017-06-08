@@ -46,6 +46,18 @@ private
     exception = exception_for(example)
     backtrace = format_backtrace(exception.backtrace, example)
 
+    if shared_group = find_shared_group(example)
+      backtrace << "Shared Example Group: \"#{shared_group.metadata[:shared_group_name]}\" called from #{shared_group.metadata[:example_group][:location]}"
+    end
+
     "#{exception.message}\n#{backtrace.join("\n")}"
+  end
+
+  def find_shared_group(example)
+    group_and_parent_groups(example).find { |group| group.metadata[:shared_group_name] }
+  end
+
+  def group_and_parent_groups(example)
+    example.example_group.parent_groups + [example.example_group]
   end
 end

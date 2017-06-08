@@ -33,5 +33,5 @@ describe "some example specs" do
     expect("\0\0\0").to eql("emergency services")
   end
 
-  include_examples "shared examples"
+  it_should_behave_like "shared examples"
 end

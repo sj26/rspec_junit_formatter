@@ -68,3 +68,17 @@ private
     notification.example.execution_result.exception
   end
 end
+
+# rspec-core 3.0.x forgot to mark this as a module function which causes:
+#
+#   NoMethodError: undefined method `wrap' for RSpec::Core::Notifications::NullColorizer:Class
+#     .../rspec-core-3.0.4/lib/rspec/core/notifications.rb:229:in `add_shared_group_line'
+#     .../rspec-core-3.0.4/lib/rspec/core/notifications.rb:157:in `message_lines'
+#
+if defined?(RSpec::Core::Notifications::NullColorizer) && RSpec::Core::Notifications::NullColorizer.is_a?(Class) && !RSpec::Core::Notifications::NullColorizer.respond_to?(:wrap)
+  RSpec::Core::Notifications::NullColorizer.class_eval do
+    def self.wrap(*args)
+      new.wrap(*args)
+    end
+  end
+end

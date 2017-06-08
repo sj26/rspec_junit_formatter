@@ -85,10 +85,7 @@ describe RspecJunitFormatter do
     expect(shared_testcases.size).to eql(2)
     expect(failed_shared_testcases.size).to eql(1)
     failed_shared_testcases.each do |testcase|
-      if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.2")
-        # This relies on the build-in rspec formatter's capabilities so only works on 3.2+
-        expect(testcase.text).to include("example_spec.rb")
-      end
+      expect(testcase.text).to include("example_spec.rb")
       expect(testcase.text).to include("shared_examples.rb")
     end
 

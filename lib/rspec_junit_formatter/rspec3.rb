@@ -60,11 +60,11 @@ private
     notification.example.full_description
   end
 
-  def exception_for(notification)
-    notification.example.execution_result.exception
+  def failure_for(notification)
+    notification.message_lines.join("\n") << "\n" << notification.formatted_backtrace.join("\n")
   end
 
-  def formatted_backtrace_for(notification)
-    notification.formatted_backtrace
+  def exception_for(notification)
+    notification.example.execution_result.exception
   end
 end

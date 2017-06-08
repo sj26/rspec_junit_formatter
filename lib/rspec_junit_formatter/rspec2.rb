@@ -42,7 +42,10 @@ private
     example.execution_result[:exception]
   end
 
-  def formatted_backtrace_for(example)
-    format_backtrace exception_for(example).backtrace, example
+  def failure_for(example)
+    exception = exception_for(example)
+    backtrace = format_backtrace(exception.backtrace, example)
+
+    "#{exception.message}\n#{backtrace.join("\n")}"
   end
 end

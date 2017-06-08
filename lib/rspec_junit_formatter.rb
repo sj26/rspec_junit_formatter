@@ -48,15 +48,13 @@ private
 
   def xml_dump_failed(example)
     exception = exception_for(example)
-    backtrace = formatted_backtrace_for(example)
 
     xml_dump_example(example) do
       output << %{<failure}
       output << %{ message="#{escape(exception.to_s)}"}
       output << %{ type="#{escape(exception.class.name)}"}
       output << %{>}
-      output << escape(exception.message.to_s) << "\n"
-      output << escape(backtrace.join("\n"))
+      output << escape(failure_for(example))
       output << %{</failure>}
     end
   end

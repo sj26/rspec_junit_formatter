@@ -1,3 +1,5 @@
+require_relative "shared_examples"
+
 describe "some example specs" do
   it "should succeed" do
     expect(true).to be(true)
@@ -30,4 +32,6 @@ describe "some example specs" do
   it "escapes naughty \0 characters" do
     expect("\0\0\0").to eql("emergency services")
   end
+
+  include_examples "shared examples"
 end

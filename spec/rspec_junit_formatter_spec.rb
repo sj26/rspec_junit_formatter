@@ -16,6 +16,8 @@ describe RspecJunitFormatter do
   let(:successful_testcases) { doc.xpath("/testsuite/testcase[count(*)=0]") }
   let(:pending_testcases) { doc.xpath("/testsuite/testcase[skipped]") }
   let(:failed_testcases) { doc.xpath("/testsuite/testcase[failure]") }
+  let(:shared_testcases) { doc.xpath("/testsuite/testcase[contains(@name, 'shared example')]") }
+  let(:failed_shared_testcases) { doc.xpath("/testsuite/testcase[contains(@name, 'shared example')][failure]") }
 
   # Combined into a single example so we don't have to re-run the example rspec
   # process over and over. (We need to change the parameters in later specs so
@@ -27,15 +29,15 @@ describe RspecJunitFormatter do
     expect(testsuite).not_to be(nil)
 
     expect(testsuite["name"]).to eql("rspec")
-    expect(testsuite["tests"]).to eql("7")
-    expect(testsuite["failures"]).to eql("5")
+    expect(testsuite["tests"]).to eql("9")
+    expect(testsuite["failures"]).to eql("6")
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)
     expect(testsuite["time"].to_f).to be > 0
 
     # it has some test cases
 
-    expect(testcases.size).to eql(7)
+    expect(testcases.size).to eql(9)
 
     testcases.each do |testcase|
       expect(testcase["classname"]).not_to be_empty
@@ -43,30 +45,30 @@ describe RspecJunitFormatter do
       expect(testcase["time"].to_f).to be > 0
     end
 
-    # it has a successful test case
+    # it has successful test cases
 
-    expect(successful_testcases.size).to eql(1)
+    expect(successful_testcases.size).to eql(2)
 
-    testcase = successful_testcases.first
-    expect(testcase).not_to be(nil)
-    expect(testcase.children).to be_empty
+    successful_testcases.each do |testcase|
+      expect(testcase).not_to be(nil)
+      expect(testcase.children).to be_empty
+    end
 
-    # it has a pending test case
+    # it has pending test cases
 
     expect(pending_testcases.size).to eql(1)
 
-    testcase = pending_testcases.first
-    expect(testcase).not_to be(nil)
-    expect(testcase.element_children.size).to eql(1)
+    pending_testcases.each do |testcase|
+      expect(testcase.element_children.size).to eql(1)
+      child = testcase.element_children.first
+      expect(child.name).to eql("skipped")
+      expect(child.attributes).to be_empty
+      expect(child.text).to be_empty
+    end
 
-    child = testcase.element_children.first
-    expect(child.name).to eql("skipped")
-    expect(child.attributes).to be_empty
-    expect(child.text).to be_empty
+    # it has failed test cases
 
-    # it has some failed test cases
-
-    expect(failed_testcases.size).to eql(5)
+    expect(failed_testcases.size).to eql(6)
 
     failed_testcases.each do |testcase|
       expect(testcase).not_to be(nil)
@@ -76,6 +78,18 @@ describe RspecJunitFormatter do
       expect(child.name).to eql("failure")
       expect(child["message"]).not_to be_empty
       expect(child.text.strip).not_to be_empty
+    end
+
+    # it has shared test cases which list both the inclusion and included files
+
+    expect(shared_testcases.size).to eql(2)
+    expect(failed_shared_testcases.size).to eql(1)
+    failed_shared_testcases.each do |testcase|
+      if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.2")
+        # This relies on the build-in rspec formatter's capabilities so only works on 3.2+
+        expect(testcase.text).to include("example_spec.rb")
+      end
+      expect(testcase.text).to include("shared_examples.rb")
     end
 
     # it correctly escapes invalid xml characters

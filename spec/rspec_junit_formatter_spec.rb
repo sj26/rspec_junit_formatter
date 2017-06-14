@@ -30,6 +30,7 @@ describe RspecJunitFormatter do
 
     expect(testsuite["name"]).to eql("rspec")
     expect(testsuite["tests"]).to eql("10")
+    expect(testsuite["skipped"]).to eql("1")
     expect(testsuite["failures"]).to eql("7")
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)

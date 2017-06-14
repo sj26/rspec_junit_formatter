@@ -16,6 +16,7 @@ private
     output << %{<testsuite}
     output << %{ name="rspec#{escape(ENV["TEST_ENV_NUMBER"].to_s)}"}
     output << %{ tests="#{example_count}"}
+    output << %{ skipped="#{pending_count}"}
     output << %{ failures="#{failure_count}"}
     output << %{ errors="0"}
     output << %{ time="#{escape("%.6f" % duration)}"}

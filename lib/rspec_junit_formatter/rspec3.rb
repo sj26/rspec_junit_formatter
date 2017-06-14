@@ -24,11 +24,15 @@ private
   attr_reader :started
 
   def example_count
-    @summary_notification.examples.count
+    @summary_notification.example_count
+  end
+
+  def pending_count
+    @summary_notification.pending_count
   end
 
   def failure_count
-    @summary_notification.failed_examples.count
+    @summary_notification.failure_count
   end
 
   def duration

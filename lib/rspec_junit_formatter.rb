@@ -1,3 +1,4 @@
+require "socket"
 require "time"
 
 require "rspec/core"
@@ -19,6 +20,7 @@ private
     output << %{ errors="0"}
     output << %{ time="#{escape("%.6f" % duration)}"}
     output << %{ timestamp="#{escape(started.iso8601)}"}
+    output << %{ hostname="#{escape(Socket.gethostname)}"}
     output << %{>\n}
     output << %{<properties>\n}
     output << %{<property}

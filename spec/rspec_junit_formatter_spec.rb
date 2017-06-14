@@ -34,6 +34,7 @@ describe RspecJunitFormatter do
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)
     expect(testsuite["time"].to_f).to be > 0
+    expect(testsuite["hostname"]).not_to be_empty
 
     # it has some test cases
 

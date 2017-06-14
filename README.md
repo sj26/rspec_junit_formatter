@@ -58,6 +58,13 @@ For use with `parallel_tests`, add `$TEST_ENV_NUMBER` in the output file option 
 
 The formatter includes `$TEST_ENV_NUMBER` in the test suite name within the XML, too.
 
+## Caveats
+
+ * XML can only represent a [limited subset of characters][xml-charsets] which
+   excludes null bytes and most control characters. This gem will use character
+   entities where possible and fall back to replacing invalid characters with
+   Ruby-like escape codes otherwise. For example, the null byte becomes `\0`.
+
 ## Roadmap
 
  * It would be nice to split things up into individual test suites, although
@@ -78,3 +85,4 @@ The MIT License, see [LICENSE][license].
   [bundler]: http://gembundler.com/
   [fuubar]: http://jeffkreeftmeijer.com/2010/fuubar-the-instafailing-rspec-progress-bar-formatter/
   [license]: https://github.com/sj26/rspec-junit-formatter/blob/master/LICENSE
+  [xml-charsets]: https://www.w3.org/TR/xml/#charsets

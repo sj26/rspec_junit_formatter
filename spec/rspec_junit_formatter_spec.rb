@@ -94,9 +94,9 @@ describe RspecJunitFormatter do
       expect(testcase.text).to include("shared_examples.rb")
     end
 
-    # it correctly omits illegal null characters
+    # it correctly replaces illegal characters
 
-    expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs omits naughty  and  characters")
+    expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs replaces naughty \\0 and \\e characters, \\x01 and \\uFFFF too")
 
     # it correctly escapes discouraged characters
 

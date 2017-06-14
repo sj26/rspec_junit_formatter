@@ -84,9 +84,28 @@ private
     "]"
   )
 
+  # Replace illegals with a Ruby-like escape
+  ILLEGAL_REPLACEMENT = Hash.new { |_, c|
+    x = c.ord
+    if x <= 0xff
+      "\\x%02X".freeze % x
+    elsif x <= 0xffff
+      "\\u%04X".freeze % x
+    else
+      "\\u{%X}".freeze % x
+    end.freeze
+  }.update(
+    "\0".freeze => "\\0".freeze,
+    "\a".freeze => "\\a".freeze,
+    "\b".freeze => "\\b".freeze,
+    "\f".freeze => "\\f".freeze,
+    "\v".freeze => "\\v".freeze,
+    "\e".freeze => "\\e".freeze,
+  ).freeze
+
   # Discouraged characters from https://www.w3.org/TR/xml/#charsets
   # Plus special characters with well-known entity replacements
-  ESCAPE_REGEXP = Regexp.new(
+  DISCOURAGED_REGEXP = Regexp.new(
     "[" <<
     "\u{22}" << # => "
     "\u{26}" << # => &
@@ -116,17 +135,17 @@ private
   )
 
   # Translate well-known entities, or use generic unicode hex entity
-  ESCAPE_REPLACEMENTS = Hash.new { |_, c| "&#x#{c.ord.to_s(16)};".freeze }.update(
-    ?" => "&quot;".freeze,
-    ?& => "&amp;".freeze,
-    ?' => "&apos;".freeze,
-    ?< => "&lt;".freeze,
-    ?> => "&gt;".freeze,
+  DISCOURAGED_REPLACEMENTS = Hash.new { |_, c| "&#x#{c.ord.to_s(16)};".freeze }.update(
+    ?".freeze => "&quot;".freeze,
+    ?&.freeze => "&amp;".freeze,
+    ?'.freeze => "&apos;".freeze,
+    ?<.freeze => "&lt;".freeze,
+    ?>.freeze => "&gt;".freeze,
   ).freeze
 
   def escape(text)
-    # Make sure it's utf-8, omit illegal characters, and replace special and discouraged characters with entities
-    text.to_s.encode(Encoding::UTF_8).gsub(ILLEGAL_REGEXP, "").gsub(ESCAPE_REGEXP, ESCAPE_REPLACEMENTS)
+    # Make sure it's utf-8, replace illegal characters with ruby-like escapes, and replace special and discouraged characters with entities
+    text.to_s.encode(Encoding::UTF_8).gsub(ILLEGAL_REGEXP, ILLEGAL_REPLACEMENT).gsub(DISCOURAGED_REGEXP, DISCOURAGED_REPLACEMENTS)
   end
 end
 

@@ -21,7 +21,7 @@ describe "some example specs" do
     end
   end
 
-  it "omits naughty \0 and \e characters" do
+  it "replaces naughty \0 and \e characters, \x01 and \uFFFF too" do
     expect("\0\0\0").to eql("emergency services")
   end
 

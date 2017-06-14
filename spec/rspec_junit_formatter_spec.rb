@@ -29,15 +29,15 @@ describe RspecJunitFormatter do
     expect(testsuite).not_to be(nil)
 
     expect(testsuite["name"]).to eql("rspec")
-    expect(testsuite["tests"]).to eql("9")
-    expect(testsuite["failures"]).to eql("6")
+    expect(testsuite["tests"]).to eql("10")
+    expect(testsuite["failures"]).to eql("7")
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)
     expect(testsuite["time"].to_f).to be > 0
 
     # it has some test cases
 
-    expect(testcases.size).to eql(9)
+    expect(testcases.size).to eql(10)
 
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
@@ -68,7 +68,7 @@ describe RspecJunitFormatter do
 
     # it has failed test cases
 
-    expect(failed_testcases.size).to eql(6)
+    expect(failed_testcases.size).to eql(7)
 
     failed_testcases.each do |testcase|
       expect(testcase).not_to be(nil)
@@ -94,15 +94,13 @@ describe RspecJunitFormatter do
       expect(testcase.text).to include("shared_examples.rb")
     end
 
-    # it correctly escapes invalid xml characters
+    # it correctly omits illegal null characters
 
-    # XML parsers seem to vary in support for parsing control codes, even as
-    # fully escaped entities. We make a best effort to encode, but the parse
-    # may throw them away. So here we'll only test that they appears in markup,
-    # not in the parsed document.
-    #
-    #expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs escapes naughty \0 characters")
-    expect(output).to include("escapes naughty &#x0; characters")
+    expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs omits naughty  and  characters")
+
+    # it correctly escapes discouraged characters
+
+    expect(doc.xpath("//testcase[contains(@name, 'controlling')]").first[:name]).to eql("some example specs escapes controlling \u{7f} characters")
 
     # it correctly escapes emoji characters
 

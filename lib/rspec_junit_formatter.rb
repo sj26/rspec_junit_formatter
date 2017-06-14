@@ -70,39 +70,53 @@ private
     output << %{</testcase>\n}
   end
 
-  # Based on valid characters allowed in XML unescaped, with restricted and
-  # discouraged characters removed
-  #
-  # See https://www.w3.org/TR/xml/#dt-chardata
-  ESCAPE_REGEXP = Regexp.new(
+  # Inversion of character range from https://www.w3.org/TR/xml/#charsets
+  ILLEGAL_REGEXP = Regexp.new(
     "[^" <<
     "\u{9}" << # => \t
     "\u{a}" << # =>\n
     "\u{d}" << # => \r
-    "\u{20}-\u{21}" <<
-    # "\u{22}" << # => "
-    "\u{23}-\u{25}" <<
-    # "\u{26}" << # => &
-    # "\u{27}" << # => '
+    "\u{20}-\u{d7ff}" <<
     "\u{28}-\u{3b}" <<
-    # "\u{3c}" << # => <
     "\u{3d}" <<
-    # "\u{3e}" << # => >
-    "\u{3f}-\u{7e}" <<
-    # "\u{7f}-\u{84}" << # discouraged control characters
-    "\u{85}" <<
-    # "\u{86}-\u{9f}" << # discouraged control characters
-    "\u{a0}-\u{d7ff}" <<
-    "\u{e000}-\u{ffcf}" <<
-    # "\u{ffd0}-\u{fdef}" <<
-    "\u{fdf0}-\u{fffd}" <<
-    # things get murky from here, just escape anything with a higher codepoint
-    # "\u{10000}-\u{10ffff}" <<
+    "\u{e000}-\u{fffd}" <<
+    "\u{10000}-\u{10ffff}" <<
+    "]"
+  )
+
+  # Discouraged characters from https://www.w3.org/TR/xml/#charsets
+  # Plus special characters with well-known entity replacements
+  ESCAPE_REGEXP = Regexp.new(
+    "[" <<
+    "\u{22}" << # => "
+    "\u{26}" << # => &
+    "\u{27}" << # => '
+    "\u{3c}" << # => <
+    "\u{3e}" << # => >
+    "\u{7f}-\u{84}" <<
+    "\u{86}-\u{9f}" <<
+    "\u{fdd0}-\u{fdef}" <<
+    "\u{1fffe}-\u{1ffff}" <<
+    "\u{2fffe}-\u{2ffff}" <<
+    "\u{3fffe}-\u{3ffff}" <<
+    "\u{4fffe}-\u{4ffff}" <<
+    "\u{5fffe}-\u{5ffff}" <<
+    "\u{6fffe}-\u{6ffff}" <<
+    "\u{7fffe}-\u{7ffff}" <<
+    "\u{8fffe}-\u{8ffff}" <<
+    "\u{9fffe}-\u{9ffff}" <<
+    "\u{afffe}-\u{affff}" <<
+    "\u{bfffe}-\u{bffff}" <<
+    "\u{cfffe}-\u{cffff}" <<
+    "\u{dfffe}-\u{dffff}" <<
+    "\u{efffe}-\u{effff}" <<
+    "\u{ffffe}-\u{fffff}" <<
+    "\u{10fffe}-\u{10ffff}" <<
     "]"
   )
 
   # Translate well-known entities, or use generic unicode hex entity
-  ESCAPE_ENTITY = Hash.new { |_, c| "&#x#{c.ord.to_s(16)};".freeze }.update(
+  ESCAPE_REPLACEMENTS = Hash.new { |_, c| "&#x#{c.ord.to_s(16)};".freeze }.update(
     ?" => "&quot;".freeze,
     ?& => "&amp;".freeze,
     ?' => "&apos;".freeze,
@@ -111,9 +125,8 @@ private
   ).freeze
 
   def escape(text)
-    # Make sure it's utf-8 (this will throw errors for bad output, but that
-    # seems okay) and replace invalid xml characters with entities
-    text.to_s.encode(Encoding::UTF_8).gsub(ESCAPE_REGEXP, ESCAPE_ENTITY)
+    # Make sure it's utf-8, omit illegal characters, and replace special and discouraged characters with entities
+    text.to_s.encode(Encoding::UTF_8).gsub(ILLEGAL_REGEXP, "").gsub(ESCAPE_REGEXP, ESCAPE_REPLACEMENTS)
   end
 end
 

@@ -32,12 +32,15 @@ private
 
   def xml_dump_examples
     examples.each do |example|
-      send :"xml_dump_#{result_of(example)}", example
+      case result_of(example)
+      when :pending
+        xml_dump_pending(example)
+      when :failed
+        xml_dump_failed(example)
+      else
+        xml_dump_example(example)
+      end
     end
-  end
-
-  def xml_dump_passed(example)
-    xml_dump_example(example)
   end
 
   def xml_dump_pending(example)

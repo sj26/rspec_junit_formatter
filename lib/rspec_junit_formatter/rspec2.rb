@@ -14,7 +14,7 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
 private
 
   def result_of(example)
-    example.execution_result[:status]
+    example.execution_result[:status].to_sym
   end
 
   def example_group_file_path_for(example)

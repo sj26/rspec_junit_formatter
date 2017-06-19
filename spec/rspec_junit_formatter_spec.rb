@@ -29,9 +29,9 @@ describe RspecJunitFormatter do
     expect(testsuite).not_to be(nil)
 
     expect(testsuite["name"]).to eql("rspec")
-    expect(testsuite["tests"]).to eql("10")
+    expect(testsuite["tests"]).to eql("11")
     expect(testsuite["skipped"]).to eql("1")
-    expect(testsuite["failures"]).to eql("7")
+    expect(testsuite["failures"]).to eql("8")
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)
     expect(testsuite["time"].to_f).to be > 0
@@ -39,7 +39,7 @@ describe RspecJunitFormatter do
 
     # it has some test cases
 
-    expect(testcases.size).to eql(10)
+    expect(testcases.size).to eql(11)
 
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
@@ -70,7 +70,7 @@ describe RspecJunitFormatter do
 
     # it has failed test cases
 
-    expect(failed_testcases.size).to eql(7)
+    expect(failed_testcases.size).to eql(8)
 
     failed_testcases.each do |testcase|
       expect(testcase).not_to be(nil)
@@ -95,6 +95,12 @@ describe RspecJunitFormatter do
       expect(testcase.text).to include("example_spec.rb")
       expect(testcase.text).to include("shared_examples.rb")
     end
+
+    # it cleans up diffs
+
+    diff_testcase_failure = doc.xpath("//testcase[contains(@name, 'diffs')]/failure").first
+    expect(diff_testcase_failure[:message]).not_to match(/\e | \\e/x)
+    expect(diff_testcase_failure.text).not_to match(/\e | \\e/x)
 
     # it correctly replaces illegal characters
 

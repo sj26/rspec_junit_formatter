@@ -21,6 +21,10 @@ describe "some example specs" do
     end
   end
 
+  it "shows diffs cleanly" do
+    expect({a: "b", c: "d"}).to eql({a: 2, c: 4})
+  end
+
   it "replaces naughty \0 and \e characters, \x01 and \uFFFF too" do
     expect("\0\0\0").to eql("emergency services")
   end

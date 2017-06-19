@@ -68,12 +68,36 @@ private
     notification.example.full_description
   end
 
+  def failure_type_for(example)
+    exception_for(example).class.name
+  end
+
+  def failure_message_for(example)
+    strip_diff_colors(exception_for(example).to_s)
+  end
+
   def failure_for(notification)
-    notification.message_lines.join("\n") << "\n" << notification.formatted_backtrace.join("\n")
+    strip_diff_colors(notification.message_lines.join("\n")) << "\n" << notification.formatted_backtrace.join("\n")
   end
 
   def exception_for(notification)
     notification.example.execution_result.exception
+  end
+
+  STRIP_DIFF_COLORS_BLOCK_REGEXP = /^ ( [ ]* ) Diff: \e\[0m (?: \n \1 \e\[0m .* )* /x
+  STRIP_DIFF_COLORS_CODES_REGEXP = /\e\[\d+m/
+
+  def strip_diff_colors(string)
+    # XXX: RSpec diffs are appended to the message lines fairly early and will
+    # contain ANSI escape codes for colorizing terminal output if the global
+    # rspec configuration is turned on, regardless of which notification lines
+    # we ask for. We need to strip the codes from the diff part of the message
+    # for XML output here.
+    #
+    # We also only want to target the diff hunks because the failure message
+    # itself might legitimately contain ansi escape codes.
+    #
+    string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
   end
 end
 

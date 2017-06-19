@@ -42,6 +42,14 @@ private
     example.execution_result[:exception]
   end
 
+  def failure_type_for(example)
+    exception_for(example).class.name
+  end
+
+  def failure_message_for(example)
+    exception_for(example).to_s
+  end
+
   def failure_for(example)
     exception = exception_for(example)
     backtrace = format_backtrace(exception.backtrace, example)

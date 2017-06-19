@@ -57,8 +57,8 @@ private
 
     xml_dump_example(example) do
       output << %{<failure}
-      output << %{ message="#{escape(exception.to_s)}"}
-      output << %{ type="#{escape(exception.class.name)}"}
+      output << %{ message="#{escape(failure_message_for(example))}"}
+      output << %{ type="#{escape(failure_type_for(example))}"}
       output << %{>}
       output << escape(failure_for(example))
       output << %{</failure>}

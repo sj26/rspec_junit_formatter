@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = "rspec_junit_formatter"
-  s.version     = "0.3.0.pre5"
+  s.version     = "0.3.0.pre6"
   s.platform    = Gem::Platform::RUBY
   s.author      = "Samuel Cochran"
   s.email       = "sj26@sj26.com"

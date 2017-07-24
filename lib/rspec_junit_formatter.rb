@@ -53,8 +53,6 @@ private
   end
 
   def xml_dump_failed(example)
-    exception = exception_for(example)
-
     xml_dump_example(example) do
       output << %{<failure}
       output << %{ message="#{escape(failure_message_for(example))}"}

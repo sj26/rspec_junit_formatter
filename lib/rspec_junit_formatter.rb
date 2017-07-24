@@ -78,11 +78,9 @@ private
   ILLEGAL_REGEXP = Regexp.new(
     "[^" <<
     "\u{9}" << # => \t
-    "\u{a}" << # =>\n
+    "\u{a}" << # => \n
     "\u{d}" << # => \r
     "\u{20}-\u{d7ff}" <<
-    "\u{28}-\u{3b}" <<
-    "\u{3d}" <<
     "\u{e000}-\u{fffd}" <<
     "\u{10000}-\u{10ffff}" <<
     "]"

@@ -100,12 +100,12 @@ private
     string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
   end
 
-  def stdout_for(example)
-    example.metadata[:stdout]
+  def stdout_for(example_notification)
+    example_notification.example.metadata[:stdout]
   end
 
-  def stderr_for(example)
-    example.metadata[:stderr]
+  def stderr_for(example_notification)
+    example_notification.example.metadata[:stderr]
   end
 end
 

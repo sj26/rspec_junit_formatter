@@ -68,4 +68,12 @@ private
   def group_and_parent_groups(example)
     example.example_group.parent_groups + [example.example_group]
   end
+
+  def stdout_for(example)
+    example.metadata[:stdout]
+  end
+
+  def stderr_for(example)
+    example.metadata[:stderr]
+  end
 end

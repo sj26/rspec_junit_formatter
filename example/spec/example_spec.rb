@@ -1,3 +1,4 @@
+require "spec_helper"
 require_relative "shared_examples"
 
 describe "some example specs" do
@@ -42,4 +43,9 @@ describe "some example specs" do
   end
 
   it_should_behave_like "shared examples"
+
+  it "can capture stdout and stderr" do
+    $stdout.puts "Test"
+    $stderr.puts "Bar"
+  end
 end

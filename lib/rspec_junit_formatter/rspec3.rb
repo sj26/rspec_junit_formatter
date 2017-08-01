@@ -99,6 +99,14 @@ private
     #
     string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
   end
+
+  def stdout_for(example)
+    example.metadata[:stdout]
+  end
+
+  def stderr_for(example)
+    example.metadata[:stderr]
+  end
 end
 
 # rspec-core 3.0.x forgot to mark this as a module function which causes:

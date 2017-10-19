@@ -85,7 +85,7 @@ private
   end
 
   STRIP_DIFF_COLORS_BLOCK_REGEXP = /^ ( [ ]* ) Diff: \e\[0m (?: \n \1 \e\[0m .* )* /x
-  STRIP_DIFF_COLORS_CODES_REGEXP = /\e\[\d+m/
+  STRIP_COLOR_CODES_REGEXP = /\e\[(?:\d+;?)+m/
 
   def strip_diff_colors(string)
     # XXX: RSpec diffs are appended to the message lines fairly early and will
@@ -97,7 +97,7 @@ private
     # We also only want to target the diff hunks because the failure message
     # itself might legitimately contain ansi escape codes.
     #
-    string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
+    string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_COLOR_CODES_REGEXP, "".freeze) }
   end
 end
 

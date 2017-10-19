@@ -6,8 +6,11 @@ describe RspecJunitFormatter do
   EXAMPLE_DIR = File.expand_path("../../example", __FILE__)
 
   before(:all) { ENV.delete("TEST_ENV_NUMBER") } # Make sure this doesn't exist by default
-  let(:extra_arguments) { [] }
-  subject(:output) { IO.popen(["bundle", "exec", "rspec", "--format", "RspecJunitFormatter", *extra_arguments], chdir: EXAMPLE_DIR, &:read) }
+  let(:extra_arguments) { ["--tag", "with_colors"] }
+  subject(:output) do
+    IO.popen(["bundle", "exec", "rspec", "--format", "RspecJunitFormatter", "-o", "tmp/rspec.xml", *extra_arguments], chdir: EXAMPLE_DIR, &:read)
+    File.read(EXAMPLE_DIR + "/tmp/rspec.xml")
+  end
 
   let(:doc) { Nokogiri::XML::Document.parse(output) }
 
@@ -142,6 +145,18 @@ describe RspecJunitFormatter do
     it "has a property with seed info" do
       expect(seed_property["name"]).to eql("seed")
       expect(seed_property["value"]).to eql("12345")
+    end
+  end
+
+  context "when stripping all color codes" do
+    let(:extra_arguments) { ["--tag", "~with_colors"] }
+
+    it "failures have no color codes" do
+      failed_testcases.each do |testcase|
+        child_text = testcase.element_children.first.text
+        expect(child_text.strip).not_to be_empty
+        expect(child_text).not_to match(/\e | \\e/x)
+      end
     end
   end
 end

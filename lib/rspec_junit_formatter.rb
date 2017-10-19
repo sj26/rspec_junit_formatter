@@ -9,6 +9,10 @@ require "rspec/core/formatters/base_formatter"
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   # rspec 2 and 3 implements are in separate files.
 
+  RSpec.configure do |config|
+    config.add_setting :strip_junit_format_colors
+  end
+
 private
 
   def xml_dump

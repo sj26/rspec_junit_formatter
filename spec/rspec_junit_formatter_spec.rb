@@ -122,7 +122,7 @@ describe RspecJunitFormatter do
   context "when $TEST_ENV_NUMBER is set" do
     around do |example|
       begin
-        ENV["TEST_ENV_NUMBER"] = "2"
+        ENV["TEST_ENV_NUMBER"] = "42"
         example.call
       ensure
         ENV.delete("TEST_ENV_NUMBER")
@@ -130,7 +130,7 @@ describe RspecJunitFormatter do
     end
 
     it "includes $TEST_ENV_NUMBER in the testsuite name" do
-      expect(testsuite["name"]).to eql("rspec2")
+      expect(testsuite["name"]).to eql("rspec42")
     end
   end
 

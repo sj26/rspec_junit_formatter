@@ -47,18 +47,19 @@ private
   end
 
   def failure_message_for(example)
-    exception_for(example).to_s
+    strip_diff_colors(exception_for(example).to_s)
   end
 
   def failure_for(example)
     exception = exception_for(example)
+    message   = strip_diff_colors(exception.message)
     backtrace = format_backtrace(exception.backtrace, example)
 
     if shared_group = find_shared_group(example)
       backtrace << "Shared Example Group: \"#{shared_group.metadata[:shared_group_name]}\" called from #{shared_group.metadata[:example_group][:location]}"
     end
 
-    "#{exception.message}\n#{backtrace.join("\n")}"
+    "#{message}\n#{backtrace.join("\n")}"
   end
 
   def find_shared_group(example)
@@ -67,5 +68,22 @@ private
 
   def group_and_parent_groups(example)
     example.example_group.parent_groups + [example.example_group]
+  end
+
+  def strip_diff_colors(string)
+    in_diff = false
+    string.lines.reduce([]) do |acc, line|
+      if in_diff && line =~ /\A\e\[\d+m/
+        acc << line.gsub(/\e\[\d+m/, '')
+      elsif in_diff
+        in_diff = false
+        acc << line
+      elsif line =~ /\A[ ]*Diff:/
+        in_diff = true
+        acc << line.gsub(/\e\[\d+m/, '')
+      else
+        acc << line
+      end
+    end.join("\n")
   end
 end

@@ -1,6 +1,16 @@
 require_relative "shared_examples"
 
-describe "some example specs" do
+describe "some example specs", with_colors: true do
+  context "without colors", with_colors: false do
+    RSpec.configure do |config|
+      config.strip_junit_format_colors = true
+    end
+
+    it "should fail without color codes" do
+      expect(false).to be(true)
+    end
+  end
+
   it "should succeed" do
     expect(true).to be(true)
   end

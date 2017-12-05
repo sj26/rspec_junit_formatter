@@ -101,14 +101,7 @@ private
   end
 
   # Completely gross hack for forcing off colorising
-  if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.6")
-    WITHOUT_COLOR_KEY = :color_mode
-    WITHOUT_COLOR_VALUE = :off
-  else
-    WITHOUT_COLOR_KEY = :color
-    WITHOUT_COLOR_VALUE = false
-  end
-  def without_color
+  def __without_color
     unset = Object.new
     force = RSpec.configuration.send(:value_for, WITHOUT_COLOR_KEY) { unset }
     if unset.equal?(force)
@@ -124,6 +117,18 @@ private
     else
       RSpec.configuration.force({WITHOUT_COLOR_KEY => force})
     end
+  end
+  if RSpec.configuration.respond_to?(:color_mode=)
+    WITHOUT_COLOR_KEY = :color_mode
+    WITHOUT_COLOR_VALUE = :off
+    alias_method :without_color, :__without_color
+  elsif RSpec.configuration.respond_to?(:color=)
+    WITHOUT_COLOR_KEY = :color
+    WITHOUT_COLOR_VALUE = false
+    alias_method :without_color, :__without_color
+  else
+    warn 'rspec_junit_formatter cannot prevent colorising due to an unexpected RSpec.configuration format'
+    def without_color; yield; end
   end
 end
 

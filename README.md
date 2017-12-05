@@ -60,16 +60,19 @@ The formatter includes `$TEST_ENV_NUMBER` in the test suite name within the XML,
 
 ## Caveats
 
- * XML can only represent a [limited subset of characters][xml-charsets] which
-   excludes null bytes and most control characters. This gem will use character
-   entities where possible and fall back to replacing invalid characters with
-   Ruby-like escape codes otherwise. For example, the null byte becomes `\0`.
+ * XML can only represent a [limited subset of characters][xml-charsets] which excludes null bytes and most control characters. This gem will use character entities where possible and fall back to replacing invalid characters with Ruby-like escape codes otherwise. For example, the null byte becomes `\0`.
 
 ## Roadmap
 
- * It would be nice to split things up into individual test suites, although
-   would this correspond to example groups? The subject? The spec file? Not
-   sure yet.
+ * It would be nice to split things up into individual test suites, although would this correspond to example groups? The subject? The spec file? Not sure yet.
+
+## Development
+
+Run the specs with `bundle exec rake spec`. Run the specs against a matrix of rspec versions using `bundle exec rake spec:all`.
+
+## Releasing
+
+Bump the gem version in the gemspec, and commit. Then `bundle exec rake build` to build a gem package, `bundle exec rake install` to install and test it locally, then `bundle exec rake release` to tag and push the commits and gem.
 
 ## License
 

@@ -1,13 +1,25 @@
+require "pty"
 require "nokogiri"
-
 require "rspec_junit_formatter"
 
 describe RspecJunitFormatter do
   EXAMPLE_DIR = File.expand_path("../../example", __FILE__)
 
   before(:all) { ENV.delete("TEST_ENV_NUMBER") } # Make sure this doesn't exist by default
+
+  let(:formatter_arguments) { ["--format", "RspecJunitFormatter"] }
   let(:extra_arguments) { [] }
-  subject(:output) { IO.popen(["bundle", "exec", "rspec", "--format", "RspecJunitFormatter", *extra_arguments], chdir: EXAMPLE_DIR, &:read) }
+
+  let(:color_opt) do
+    RSpec.configuration.respond_to?(:color_mode=) ? "--force-color" : "--color"
+  end
+
+  def execute_example_spec
+    command = ["bundle", "exec", "rspec", *formatter_arguments, color_opt, *extra_arguments]
+    PTY.spawn(*command, chdir: EXAMPLE_DIR).first.read
+  end
+
+  let(:output) { execute_example_spec }
 
   let(:doc) { Nokogiri::XML::Document.parse(output) }
 
@@ -80,6 +92,7 @@ describe RspecJunitFormatter do
       expect(child.name).to eql("failure")
       expect(child["message"]).not_to be_empty
       expect(child.text.strip).not_to be_empty
+      expect(child.text.strip).not_to match(/\\e\[(?:\d+;?)+m/)
     end
 
     # it has shared test cases which list both the inclusion and included files

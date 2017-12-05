@@ -14,9 +14,25 @@ describe RspecJunitFormatter do
     RSpec.configuration.respond_to?(:color_mode=) ? "--force-color" : "--color"
   end
 
+  def safe_pty(command, directory)
+    sio = StringIO.new
+    begin
+      PTY.spawn(*command, chdir: directory) do |r,w,pid|
+        begin
+          r.each_line { |l| sio.puts(l) }
+        rescue Errno::EIO
+        ensure
+          ::Process.wait pid
+        end
+      end
+    rescue PTY::ChildExited
+    end
+    sio.string
+  end
+
   def execute_example_spec
     command = ["bundle", "exec", "rspec", *formatter_arguments, color_opt, *extra_arguments]
-    PTY.spawn(*command, chdir: EXAMPLE_DIR).first.read
+    safe_pty(command, EXAMPLE_DIR)
   end
 
   let(:output) { execute_example_spec }

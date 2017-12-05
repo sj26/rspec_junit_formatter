@@ -1,2 +1,5 @@
-/example/tmp
-/*.gem
+/.bundle/
+/doc/
+/example/tmp/
+/pkg/
+/tmp/

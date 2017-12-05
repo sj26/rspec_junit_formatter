@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 Gem::Specification.new do |s|
   s.name        = "rspec_junit_formatter"
   s.version     = "0.4.0.pre"
@@ -17,7 +15,9 @@ Gem::Specification.new do |s|
   # https://github.com/rspec/rspec-core/commit/f06254c00770387e3a8a2efbdbc973035c217f6a
   s.add_dependency "rspec-core", ">= 2", "< 4", "!= 2.12.0"
 
+  s.add_development_dependency "bundler", "~> 1.16"
   s.add_development_dependency "nokogiri", "~> 1.6"
+  s.add_development_dependency "rake", "~> 10.0"
 
   s.files        = Dir["lib/**/*", "README.md", "LICENSE"]
   s.require_path = "lib"

@@ -153,8 +153,8 @@ end
 
 RspecJunitFormatter = RSpecJUnitFormatter
 
-if RSpec::Core::Version::STRING.start_with? "2."
-  require "rspec_junit_formatter/rspec2"
-else
+if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3")
   require "rspec_junit_formatter/rspec3"
+else
+  require "rspec_junit_formatter/rspec2"
 end

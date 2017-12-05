@@ -16,7 +16,7 @@ class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
 
   def dump_summary(notification)
     @summary_notification = notification
-    xml_dump
+    without_color { xml_dump }
   end
 
 private
@@ -98,6 +98,32 @@ private
     # itself might legitimately contain ansi escape codes.
     #
     string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
+  end
+
+  # Completely gross hack for forcing off colorising
+  if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.6")
+    WITHOUT_COLOR_KEY = :color_mode
+    WITHOUT_COLOR_VALUE = :off
+  else
+    WITHOUT_COLOR_KEY = :color
+    WITHOUT_COLOR_VALUE = false
+  end
+  def without_color
+    unset = Object.new
+    force = RSpec.configuration.send(:value_for, WITHOUT_COLOR_KEY) { unset }
+    if unset.equal?(force)
+      previous = RSpec.configuration.send(WITHOUT_COLOR_KEY)
+      RSpec.configuration.send(:"#{WITHOUT_COLOR_KEY}=", WITHOUT_COLOR_VALUE)
+    else
+      RSpec.configuration.force({WITHOUT_COLOR_KEY => WITHOUT_COLOR_VALUE})
+    end
+    yield
+  ensure
+    if unset.equal?(force)
+      RSpec.configuration.send(:"#{WITHOUT_COLOR_KEY}=", previous)
+    else
+      RSpec.configuration.force({WITHOUT_COLOR_KEY => force})
+    end
   end
 end
 

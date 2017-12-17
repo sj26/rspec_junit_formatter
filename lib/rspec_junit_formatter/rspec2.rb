@@ -47,18 +47,19 @@ private
   end
 
   def failure_message_for(example)
-    exception_for(example).to_s
+    strip_diff_colors(exception_for(example).to_s)
   end
 
   def failure_for(example)
     exception = exception_for(example)
+    message   = strip_diff_colors(exception.message)
     backtrace = format_backtrace(exception.backtrace, example)
 
     if shared_group = find_shared_group(example)
       backtrace << "Shared Example Group: \"#{shared_group.metadata[:shared_group_name]}\" called from #{shared_group.metadata[:example_group][:location]}"
     end
 
-    "#{exception.message}\n#{backtrace.join("\n")}"
+    "#{message}\n#{backtrace.join("\n")}"
   end
 
   def find_shared_group(example)

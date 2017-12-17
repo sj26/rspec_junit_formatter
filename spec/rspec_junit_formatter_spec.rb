@@ -1,13 +1,41 @@
+require "pty"
 require "nokogiri"
-
 require "rspec_junit_formatter"
 
 describe RspecJunitFormatter do
   EXAMPLE_DIR = File.expand_path("../../example", __FILE__)
 
   before(:all) { ENV.delete("TEST_ENV_NUMBER") } # Make sure this doesn't exist by default
+
+  let(:formatter_arguments) { ["--format", "RspecJunitFormatter"] }
   let(:extra_arguments) { [] }
-  subject(:output) { IO.popen(["bundle", "exec", "rspec", "--format", "RspecJunitFormatter", *extra_arguments], chdir: EXAMPLE_DIR, &:read) }
+
+  let(:color_opt) do
+    RSpec.configuration.respond_to?(:color_mode=) ? "--force-color" : "--color"
+  end
+
+  def safe_pty(command, directory)
+    sio = StringIO.new
+    begin
+      PTY.spawn(*command, chdir: directory) do |r,w,pid|
+        begin
+          r.each_line { |l| sio.puts(l) }
+        rescue Errno::EIO
+        ensure
+          ::Process.wait pid
+        end
+      end
+    rescue PTY::ChildExited
+    end
+    sio.string
+  end
+
+  def execute_example_spec
+    command = ["bundle", "exec", "rspec", *formatter_arguments, color_opt, *extra_arguments]
+    safe_pty(command, EXAMPLE_DIR)
+  end
+
+  let(:output) { execute_example_spec }
 
   let(:doc) { Nokogiri::XML::Document.parse(output) }
 
@@ -80,6 +108,7 @@ describe RspecJunitFormatter do
       expect(child.name).to eql("failure")
       expect(child["message"]).not_to be_empty
       expect(child.text.strip).not_to be_empty
+      expect(child.text.strip).not_to match(/\\e\[(?:\d+;?)+m/)
     end
 
     # it has shared test cases which list both the inclusion and included files
@@ -122,7 +151,7 @@ describe RspecJunitFormatter do
   context "when $TEST_ENV_NUMBER is set" do
     around do |example|
       begin
-        ENV["TEST_ENV_NUMBER"] = "2"
+        ENV["TEST_ENV_NUMBER"] = "42"
         example.call
       ensure
         ENV.delete("TEST_ENV_NUMBER")
@@ -130,7 +159,7 @@ describe RspecJunitFormatter do
     end
 
     it "includes $TEST_ENV_NUMBER in the testsuite name" do
-      expect(testsuite["name"]).to eql("rspec2")
+      expect(testsuite["name"]).to eql("rspec42")
     end
   end
 

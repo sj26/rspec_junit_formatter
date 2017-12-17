@@ -15,4 +15,5 @@ gemfile:
   - gemfiles/Gemfile.rspec3-4
   - gemfiles/Gemfile.rspec3-5
   - gemfiles/Gemfile.rspec3-6
+  - gemfiles/Gemfile.rspec3-7
 script: bundle exec rspec

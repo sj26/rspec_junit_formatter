@@ -84,45 +84,42 @@ private
     notification.example.execution_result.exception
   end
 
-  STRIP_DIFF_COLORS_BLOCK_REGEXP = /^ ( [ ]* ) Diff: \e\[0m (?: \n \1 \e\[0m .* )* /x
-  STRIP_DIFF_COLORS_CODES_REGEXP = /\e\[\d+m/
-
-  def strip_diff_colors(string)
-    # XXX: RSpec diffs are appended to the message lines fairly early and will
-    # contain ANSI escape codes for colorizing terminal output if the global
-    # rspec configuration is turned on, regardless of which notification lines
-    # we ask for. We need to strip the codes from the diff part of the message
-    # for XML output here.
-    #
-    # We also only want to target the diff hunks because the failure message
-    # itself might legitimately contain ansi escape codes.
-    #
-    string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
-  end
-
-  # Completely gross hack for forcing off colorising
-  if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.6")
-    WITHOUT_COLOR_KEY = :color_mode
-    WITHOUT_COLOR_VALUE = :off
-  else
-    WITHOUT_COLOR_KEY = :color
-    WITHOUT_COLOR_VALUE = false
-  end
-  def without_color
+  # rspec makes it really difficult to swap in configuration temporarily due to
+  # the way it cascades defaults, command line arguments, and user
+  # configuration. This method makes sure configuration gets swapped in
+  # correctly, but also that the original state is definitely restored.
+  def swap_rspec_configuration(key, value)
     unset = Object.new
-    force = RSpec.configuration.send(:value_for, WITHOUT_COLOR_KEY) { unset }
+    force = RSpec.configuration.send(:value_for, key) { unset }
     if unset.equal?(force)
-      previous = RSpec.configuration.send(WITHOUT_COLOR_KEY)
-      RSpec.configuration.send(:"#{WITHOUT_COLOR_KEY}=", WITHOUT_COLOR_VALUE)
+      previous = RSpec.configuration.send(key)
+      RSpec.configuration.send(:"#{key}=", value)
     else
-      RSpec.configuration.force({WITHOUT_COLOR_KEY => WITHOUT_COLOR_VALUE})
+      RSpec.configuration.force({key => value})
     end
     yield
   ensure
     if unset.equal?(force)
-      RSpec.configuration.send(:"#{WITHOUT_COLOR_KEY}=", previous)
+      RSpec.configuration.send(:"#{key}=", previous)
     else
-      RSpec.configuration.force({WITHOUT_COLOR_KEY => force})
+      RSpec.configuration.force({key => force})
+    end
+  end
+
+  # Completely gross hack for absolutely forcing off colorising for the
+  # duration of a block.
+  if RSpec.configuration.respond_to?(:color_mode=)
+    def without_color(&block)
+      swap_rspec_configuration(:color_mode, :off, &block)
+    end
+  elsif RSpec.configuration.respond_to?(:color=)
+    def without_color(&block)
+      swap_rspec_configuration(:color, false, &block)
+    end
+  else
+    warn 'rspec_junit_formatter cannot prevent colorising due to an unexpected RSpec.configuration format'
+    def without_color
+      yield
     end
   end
 end

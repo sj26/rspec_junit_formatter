@@ -84,22 +84,6 @@ private
     notification.example.execution_result.exception
   end
 
-  STRIP_DIFF_COLORS_BLOCK_REGEXP = /^ ( [ ]* ) Diff: \e\[0m (?: \n \1 \e\[0m .* )* /x
-  STRIP_DIFF_COLORS_CODES_REGEXP = /\e\[\d+m/
-
-  def strip_diff_colors(string)
-    # XXX: RSpec diffs are appended to the message lines fairly early and will
-    # contain ANSI escape codes for colorizing terminal output if the global
-    # rspec configuration is turned on, regardless of which notification lines
-    # we ask for. We need to strip the codes from the diff part of the message
-    # for XML output here.
-    #
-    # We also only want to target the diff hunks because the failure message
-    # itself might legitimately contain ansi escape codes.
-    #
-    string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
-  end
-
   # Completely gross hack for forcing off colorising
   def __without_color
     unset = Object.new

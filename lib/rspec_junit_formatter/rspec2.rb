@@ -69,21 +69,4 @@ private
   def group_and_parent_groups(example)
     example.example_group.parent_groups + [example.example_group]
   end
-
-  def strip_diff_colors(string)
-    in_diff = false
-    string.lines.reduce([]) do |acc, line|
-      if in_diff && line =~ /\A\e\[\d+m/
-        acc << line.gsub(/\e\[\d+m/, '')
-      elsif in_diff
-        in_diff = false
-        acc << line
-      elsif line =~ /\A[ ]*Diff:/
-        in_diff = true
-        acc << line.gsub(/\e\[\d+m/, '')
-      else
-        acc << line
-      end
-    end.join("\n")
-  end
 end

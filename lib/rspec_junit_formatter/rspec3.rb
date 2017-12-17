@@ -84,35 +84,43 @@ private
     notification.example.execution_result.exception
   end
 
-  # Completely gross hack for forcing off colorising
-  def __without_color
+  # rspec makes it really difficult to swap in configuration temporarily due to
+  # the way it cascades defaults, command line arguments, and user
+  # configuration. This method makes sure configuration gets swapped in
+  # correctly, but also that the original state is definitely restored.
+  def swap_rspec_configuration(key, value)
     unset = Object.new
-    force = RSpec.configuration.send(:value_for, WITHOUT_COLOR_KEY) { unset }
+    force = RSpec.configuration.send(:value_for, key) { unset }
     if unset.equal?(force)
-      previous = RSpec.configuration.send(WITHOUT_COLOR_KEY)
-      RSpec.configuration.send(:"#{WITHOUT_COLOR_KEY}=", WITHOUT_COLOR_VALUE)
+      previous = RSpec.configuration.send(key)
+      RSpec.configuration.send(:"#{key}=", value)
     else
-      RSpec.configuration.force({WITHOUT_COLOR_KEY => WITHOUT_COLOR_VALUE})
+      RSpec.configuration.force({key => value})
     end
     yield
   ensure
     if unset.equal?(force)
-      RSpec.configuration.send(:"#{WITHOUT_COLOR_KEY}=", previous)
+      RSpec.configuration.send(:"#{key}=", previous)
     else
-      RSpec.configuration.force({WITHOUT_COLOR_KEY => force})
+      RSpec.configuration.force({key => force})
     end
   end
+
+  # Completely gross hack for absolutely forcing off colorising for the
+  # duration of a block.
   if RSpec.configuration.respond_to?(:color_mode=)
-    WITHOUT_COLOR_KEY = :color_mode
-    WITHOUT_COLOR_VALUE = :off
-    alias_method :without_color, :__without_color
+    def without_color(&block)
+      swap_rspec_configuration(:color_mode, :off, &block)
+    end
   elsif RSpec.configuration.respond_to?(:color=)
-    WITHOUT_COLOR_KEY = :color
-    WITHOUT_COLOR_VALUE = false
-    alias_method :without_color, :__without_color
+    def without_color(&block)
+      swap_rspec_configuration(:color, false, &block)
+    end
   else
     warn 'rspec_junit_formatter cannot prevent colorising due to an unexpected RSpec.configuration format'
-    def without_color; yield; end
+    def without_color
+      yield
+    end
   end
 end
 

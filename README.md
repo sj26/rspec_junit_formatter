@@ -51,7 +51,7 @@ Put the same arguments as the commands above in [your `.rspec`][rspec-file]:
 --format RspecJunitFormatter
 --out rspec.xml
 ```
-  [bundler]: http://gembundler.com/
+  [bundler]: https://bundler.io
   [rspec-file]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/configuration/read-command-line-configuration-options-from-files
 
 ### Parallel tests

@@ -58,6 +58,30 @@ For use with `parallel_tests`, add `$TEST_ENV_NUMBER` in the output file option 
 
 The formatter includes `$TEST_ENV_NUMBER` in the test suite name within the XML, too.
 
+### Capturing output
+
+If you like, you can capture the standard output and error streams of each test into the `:stdout` and `:stderr` example metadata which will be added to the junit report, e.g.:
+
+```ruby
+# spec_helper.rb
+
+RSpec.configure do |config|
+  # register around filter that captures stdout and stderr
+  config.around(:each) do |example|
+    $stdout = StringIO.new
+    $stderr = StringIO.new
+
+    example.run
+
+    example.metadata[:stdout] = $stdout.string
+    example.metadata[:stderr] = $stderr.string
+
+    $stdout = STDOUT
+    $stderr = STDERR
+  end
+end
+```
+
 ## Caveats
 
  * XML can only represent a [limited subset of characters][xml-charsets] which

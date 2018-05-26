@@ -3,9 +3,12 @@
 [![Build results](http://img.shields.io/travis/sj26/rspec_junit_formatter/master.svg)](https://travis-ci.org/sj26/rspec_junit_formatter) 
 [![Gem version](http://img.shields.io/gem/v/rspec_junit_formatter.svg)](https://rubygems.org/gems/rspec_junit_formatter)
 
-[RSpec][rspec] 2 & 3 results that [Jenkins][jenkins] can read. Probably a few other CI services, too.
+[RSpec][rspec] 2 & 3 results that your CI can read. [Jenkins][jenkins-junit], [Buildkite](buildkite-junit), [CircleCI](circleci-junit), and probably more, too.
 
-Inspired by the work of [Diego Souza][dgvncsz0f] on [RSpec Formatters][dgvncsz0f/rspec_formatters] after frustration with [CI Reporter][ci_reporter].
+  [rspec]: http://rspec.info/
+  [jenkins-junit]: https://jenkins.io/doc/pipeline/steps/junit/
+  [buildkite-junit]: https://github.com/buildkite/rspec-junit-example
+  [circleci-junit]: https://circleci.com/docs/2.0/collect-test-data/
 
 ## Usage
 
@@ -29,6 +32,8 @@ You can use it in combination with other [formatters][rspec-formatters], too:
 rspec --format progress --format RspecJunitFormatter --out rspec.xml
 ```
 
+  [rspec-formatters]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/formatters
+
 ### Using in your project with Bundler
 
 Add it to your Gemfile if you're using [Bundler][bundler]. Put it in the same groups as rspec.
@@ -46,6 +51,8 @@ Put the same arguments as the commands above in [your `.rspec`][rspec-file]:
 --format RspecJunitFormatter
 --out rspec.xml
 ```
+  [bundler]: http://gembundler.com/
+  [rspec-file]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/configuration/read-command-line-configuration-options-from-files
 
 ### Parallel tests
 
@@ -86,6 +93,8 @@ end
 
  * XML can only represent a [limited subset of characters][xml-charsets] which excludes null bytes and most control characters. This gem will use character entities where possible and fall back to replacing invalid characters with Ruby-like escape codes otherwise. For example, the null byte becomes `\0`.
 
+  [xml-charsets]: https://www.w3.org/TR/xml/#charsets
+
 ## Roadmap
 
  * It would be nice to split things up into individual test suites, although would this correspond to example groups? The subject? The spec file? Not sure yet.
@@ -102,14 +111,12 @@ Bump the gem version in the gemspec, and commit. Then `bundle exec rake build` t
 
 The MIT License, see [LICENSE][license].
 
-  [rspec]: http://rspec.info/
-  [rspec-formatters]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/formatters
-  [rspec-file]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/configuration/read-command-line-configuration-options-from-files
-  [jenkins]: http://jenkins-ci.org/
+  [license]: https://github.com/sj26/rspec-junit-formatter/blob/master/LICENSE
+
+## Thanks
+
+Inspired by the work of [Diego Souza][dgvncsz0f] on [RSpec Formatters][dgvncsz0f/rspec_formatters] after frustration with [CI Reporter][ci_reporter].
+
   [dgvncsz0f]: https://github.com/dgvncsz0f
   [dgvncsz0f/rspec_formatters]: https://github.com/dgvncsz0f/rspec_formatters
   [ci_reporter]: https://github.com/nicksieger/ci_reporter
-  [bundler]: http://gembundler.com/
-  [fuubar]: http://jeffkreeftmeijer.com/2010/fuubar-the-instafailing-rspec-progress-bar-formatter/
-  [license]: https://github.com/sj26/rspec-junit-formatter/blob/master/LICENSE
-  [xml-charsets]: https://www.w3.org/TR/xml/#charsets

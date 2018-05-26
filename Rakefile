@@ -7,7 +7,8 @@ desc "Run specs against all support rspec versions"
 task "spec:all" do
   fail unless (Dir["gemfiles/Gemfile.*"] - Dir["gemfiles/Gemfile.*.lock"]).all? do |gemfile|
     Bundler.with_clean_env do
-      system({"BUNDLE_GEMFILE" => gemfile}, "bundle", "exec", "rake", "spec")
+      (system({"BUNDLE_GEMFILE" => gemfile}, "bundle", "check") || system({"BUNDLE_GEMFILE" => gemfile}, "bundle", "install")) &&
+        system({"BUNDLE_GEMFILE" => gemfile}, "bundle", "exec", "rake", "spec")
     end
   end
 end

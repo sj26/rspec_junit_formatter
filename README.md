@@ -3,7 +3,7 @@
 [![Build results](http://img.shields.io/travis/sj26/rspec_junit_formatter/master.svg)](https://travis-ci.org/sj26/rspec_junit_formatter) 
 [![Gem version](http://img.shields.io/gem/v/rspec_junit_formatter.svg)](https://rubygems.org/gems/rspec_junit_formatter)
 
-[RSpec][rspec] 2 & 3 results that your CI can read. [Jenkins][jenkins-junit], [Buildkite](buildkite-junit), [CircleCI](circleci-junit), and probably more, too.
+[RSpec][rspec] 2 & 3 results that your CI can read. [Jenkins][jenkins-junit], [Buildkite][buildkite-junit], [CircleCI][circleci-junit], and probably more, too.
 
   [rspec]: http://rspec.info/
   [jenkins-junit]: https://jenkins.io/doc/pipeline/steps/junit/

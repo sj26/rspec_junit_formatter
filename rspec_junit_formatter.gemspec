@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rspec-core", ">= 2", "< 4", "!= 2.12.0"
 
   s.add_development_dependency "bundler", "~> 1.16"
-  s.add_development_dependency "nokogiri", "~> 1.6"
+  s.add_development_dependency "nokogiri", "~> 1.8", ">= 1.8.2"
   s.add_development_dependency "rake", "~> 10.0"
   s.add_development_dependency "coderay", "~> 1.0"
 

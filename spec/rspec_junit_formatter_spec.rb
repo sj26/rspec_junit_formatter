@@ -41,7 +41,7 @@ describe RspecJunitFormatter do
 
   let(:testsuite) { doc.xpath("/testsuite").first }
   let(:testcases) { doc.xpath("/testsuite/testcase") }
-  let(:successful_testcases) { doc.xpath("/testsuite/testcase[count(*)=0]") }
+  let(:successful_testcases) { doc.xpath("/testsuite/testcase[not(failure) and not(skipped)]") }
   let(:pending_testcases) { doc.xpath("/testsuite/testcase[skipped]") }
   let(:failed_testcases) { doc.xpath("/testsuite/testcase[failure]") }
   let(:shared_testcases) { doc.xpath("/testsuite/testcase[contains(@name, 'shared example')]") }
@@ -57,7 +57,7 @@ describe RspecJunitFormatter do
     expect(testsuite).not_to be(nil)
 
     expect(testsuite["name"]).to eql("rspec")
-    expect(testsuite["tests"]).to eql("11")
+    expect(testsuite["tests"]).to eql("12")
     expect(testsuite["skipped"]).to eql("1")
     expect(testsuite["failures"]).to eql("8")
     expect(testsuite["errors"]).to eql("0")
@@ -67,7 +67,7 @@ describe RspecJunitFormatter do
 
     # it has some test cases
 
-    expect(testcases.size).to eql(11)
+    expect(testcases.size).to eql(12)
 
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
@@ -77,11 +77,14 @@ describe RspecJunitFormatter do
 
     # it has successful test cases
 
-    expect(successful_testcases.size).to eql(2)
+    expect(successful_testcases.size).to eql(3)
 
     successful_testcases.each do |testcase|
       expect(testcase).not_to be(nil)
-      expect(testcase.children).to be_empty
+      # test results that capture stdout / stderr are not 'empty'
+      unless (testcase["name"]) =~ /capture stdout and stderr/
+        expect(testcase.children).to be_empty
+      end
     end
 
     # it has pending test cases
@@ -146,6 +149,10 @@ describe RspecJunitFormatter do
     # it correctly escapes reserved xml characters
 
     expect(doc.xpath("//testcase[contains(@name, 'html')]").first[:name]).to eql(%{some example specs escapes <html tags='correctly' and="such &amp; such">})
+
+    # it correctly captures stdout / stderr output
+    expect(doc.xpath("//testcase/system-out").text).to eql("Test\n")
+    expect(doc.xpath("//testcase/system-err").text).to eql("Bar\n")
   end
 
   context "when $TEST_ENV_NUMBER is set" do

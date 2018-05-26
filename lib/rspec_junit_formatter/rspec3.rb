@@ -122,6 +122,14 @@ private
       yield
     end
   end
+
+  def stdout_for(example_notification)
+    example_notification.example.metadata[:stdout]
+  end
+
+  def stderr_for(example_notification)
+    example_notification.example.metadata[:stderr]
+  end
 end
 
 # rspec-core 3.0.x forgot to mark this as a module function which causes:

@@ -109,9 +109,7 @@ Bump the gem version in the gemspec, and commit. Then `bundle exec rake build` t
 
 ## License
 
-The MIT License, see [LICENSE][license].
-
-  [license]: https://github.com/sj26/rspec-junit-formatter/blob/master/LICENSE
+The MIT License, see [LICENSE](./LICENSE).
 
 ## Thanks
 

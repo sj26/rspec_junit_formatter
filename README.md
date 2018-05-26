@@ -101,7 +101,9 @@ end
 
 ## Development
 
-Run the specs with `bundle exec rake spec`. Run the specs against a matrix of rspec versions using `bundle exec rake spec:all`.
+Run the specs with `bundle exec rake`, which uses [Appraisal][appraisal] to run the specs against all supported versions of rspec.
+
+  [appraisal]: https://github.com/thoughtbot/appraisal
 
 ## Releasing
 

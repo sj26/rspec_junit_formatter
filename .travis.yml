@@ -7,13 +7,13 @@ rvm:
   - 2.3
   - 2.2
 gemfile:
-  - gemfiles/Gemfile.rspec2-x
-  - gemfiles/Gemfile.rspec3-0
-  - gemfiles/Gemfile.rspec3-1
-  - gemfiles/Gemfile.rspec3-2
-  - gemfiles/Gemfile.rspec3-3
-  - gemfiles/Gemfile.rspec3-4
-  - gemfiles/Gemfile.rspec3-5
-  - gemfiles/Gemfile.rspec3-6
-  - gemfiles/Gemfile.rspec3-7
+  - gemfiles/rspec_2_x.gemfile
+  - gemfiles/rspec_3_0.gemfile
+  - gemfiles/rspec_3_1.gemfile
+  - gemfiles/rspec_3_2.gemfile
+  - gemfiles/rspec_3_3.gemfile
+  - gemfiles/rspec_3_4.gemfile
+  - gemfiles/rspec_3_5.gemfile
+  - gemfiles/rspec_3_6.gemfile
+  - gemfiles/rspec_3_7.gemfile
 script: bundle exec rspec

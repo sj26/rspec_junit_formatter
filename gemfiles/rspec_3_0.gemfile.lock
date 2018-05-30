@@ -39,7 +39,7 @@ DEPENDENCIES
   bundler
   coderay
   nokogiri (~> 1.8, >= 1.8.2)
-  rake
+  rake (~> 10.0)
   rspec (~> 3.0.0)
   rspec_junit_formatter!
 

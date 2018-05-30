@@ -165,8 +165,8 @@ private
     text.to_s.encode(Encoding::UTF_8).gsub(ILLEGAL_REGEXP, ILLEGAL_REPLACEMENT).gsub(DISCOURAGED_REGEXP, DISCOURAGED_REPLACEMENTS)
   end
 
-  STRIP_DIFF_COLORS_BLOCK_REGEXP = /^ ( [ ]* ) Diff: (?: \e\[0m )? (?: \n \1 \e\[\d+m .* )* /x
-  STRIP_DIFF_COLORS_CODES_REGEXP = /\e\[\d+m/
+  STRIP_DIFF_COLORS_BLOCK_REGEXP = /^ ( [ ]* ) Diff: (?: \e\[0m )? (?: \n \1 \e\[(\d+;?){1,3}m .* )* /x
+  STRIP_DIFF_COLORS_CODES_REGEXP = /\e\[(\d+;?){1,3}m/
 
   def strip_diff_colors(string)
     # XXX: RSpec diffs are appended to the message lines fairly early and will

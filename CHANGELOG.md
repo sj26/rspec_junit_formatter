@@ -22,4 +22,5 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
   ["Capturing output"]: https://github.com/sj26/rspec_junit_formatter#capturing-output
 
   [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.4.0...master
+  [0.4.1]: https://github.com/sj26/rspec_junit_formatter/compare/v0.4.0...v0.4.1
   [0.4.0]: https://github.com/sj26/rspec_junit_formatter/compare/v0.3.0...v0.4.0

@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
+## [0.4.1] - 2018-05-26
+### Fixed
+- Diff ANSI stripping now works for codes with multiple tags, too
+
 ## [0.4.0] - 2018-05-26
 ### Added
 - Add support for including STDOUT and STDERR from tests in the JUnit output (see ["Capturing output"] in the readme for details)

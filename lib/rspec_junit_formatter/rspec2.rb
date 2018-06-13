@@ -22,7 +22,7 @@ private
     while meta[:example_group]
       meta = meta[:example_group]
     end
-    meta[:file_path]
+    meta[:location]
   end
 
   def classname_for(example)

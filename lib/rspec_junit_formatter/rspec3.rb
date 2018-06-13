@@ -52,7 +52,7 @@ private
     while parent_metadata = metadata[:parent_example_group]
       metadata = parent_metadata
     end
-    metadata[:file_path]
+    metadata[:location]
   end
 
   def classname_for(notification)

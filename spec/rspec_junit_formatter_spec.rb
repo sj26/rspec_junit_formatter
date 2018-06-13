@@ -120,6 +120,7 @@ describe RspecJunitFormatter do
     shared_testcases.each do |testcase|
       # shared examples should be groups with their including files
       expect(testcase["classname"]).to eql("spec.example_spec")
+      expect(testcase["file"]).to eql("./spec/example_spec.rb:4")
     end
 
     expect(failed_shared_testcases.size).to eql(1)

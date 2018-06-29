@@ -160,9 +160,15 @@ private
     ?>.freeze => "&gt;".freeze,
   ).freeze
 
+  def encode(text)
+    text.to_s.encode(Encoding::UTF_8)
+  rescue Encoding::UndefinedConversionError
+    text.force_encoding(Encoding::UTF_8)
+  end
+
   def escape(text)
     # Make sure it's utf-8, replace illegal characters with ruby-like escapes, and replace special and discouraged characters with entities
-    text.to_s.encode(Encoding::UTF_8).gsub(ILLEGAL_REGEXP, ILLEGAL_REPLACEMENT).gsub(DISCOURAGED_REGEXP, DISCOURAGED_REPLACEMENTS)
+    encode(text).gsub(ILLEGAL_REGEXP, ILLEGAL_REPLACEMENT).gsub(DISCOURAGED_REGEXP, DISCOURAGED_REPLACEMENTS)
   end
 
   STRIP_DIFF_COLORS_BLOCK_REGEXP = /^ ( [ ]* ) Diff: (?: \e\[ 0 m )? (?: \n \1 \e\[ \d+ (?: ; \d+ )* m .* )* /x

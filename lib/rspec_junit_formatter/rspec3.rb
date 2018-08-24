@@ -55,6 +55,18 @@ private
     metadata[:file_path]
   end
 
+  def file_path_for(notification)
+    notification.example.metadata[:file_path]
+  end
+
+  def line_number_for(notification)
+    notification.example.metadata[:line_number]
+  end
+
+  def scoped_id_for(notification)
+    notification.example.metadata[:scoped_id]
+  end
+
   def classname_for(notification)
     fp = example_group_file_path_for(notification)
     fp.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(%r{\A\.+|\.+\Z}, "")

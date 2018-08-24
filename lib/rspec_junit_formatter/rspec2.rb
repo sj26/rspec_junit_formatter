@@ -25,6 +25,18 @@ private
     meta[:file_path]
   end
 
+  def file_path_for(notification)
+    nil
+  end
+
+  def line_number_for(notification)
+    nil
+  end
+
+  def scoped_id_for(notification)
+    nil
+  end
+
   def classname_for(example)
     fp = example_group_file_path_for(example)
     fp.sub(%r{\.[^/.]+\Z}, "").gsub("/", ".").gsub(/\A\.+|\.+\Z/, "")

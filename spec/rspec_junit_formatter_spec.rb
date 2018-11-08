@@ -72,6 +72,7 @@ describe RspecJunitFormatter do
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
       expect(testcase["file"]).not_to be_empty
+      expect(testcase["line_number"].to_i).to be > 0
       expect(testcase["name"]).not_to be_empty
       expect(testcase["time"].to_f).to be > 0
     end
@@ -110,6 +111,7 @@ describe RspecJunitFormatter do
 
       child = testcase.element_children.first
       expect(testcase["file"]).not_to be_empty
+      expect(testcase["line_number"].to_i).to be > 0
       expect(child.name).to eql("failure")
       expect(child["message"]).not_to be_empty
       expect(child.text.strip).not_to be_empty

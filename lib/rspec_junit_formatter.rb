@@ -68,6 +68,7 @@ private
     output << %{ classname="#{escape(classname_for(example))}"}
     output << %{ name="#{escape(description_for(example))}"}
     output << %{ file="#{escape(example_group_file_path_for(example))}"}
+    output << %{ line_number="#{escape(line_number_for(example))}"}
     output << %{ time="#{escape("%.6f" % duration_for(example))}"}
     output << %{>}
     yield if block_given?

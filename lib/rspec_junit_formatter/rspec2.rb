@@ -25,6 +25,14 @@ private
     meta[:file_path]
   end
 
+  def line_number_for(example)
+    meta = example.metadata
+    while meta[:example_group]
+      meta = meta[:example_group]
+    end
+    meta[:line_number]
+  end
+
   def classname_for(example)
     fp = example_group_file_path_for(example)
     fp.sub(%r{\.[^/.]+\Z}, "").gsub("/", ".").gsub(/\A\.+|\.+\Z/, "")

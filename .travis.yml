@@ -7,6 +7,8 @@ rvm:
   - 2.4
   - 2.3
   - 2.2
+before_install:
+  - gem install bundler -v $(grep -F "BUNDLED WITH" -A 1 "${BUNDLE_GEMFILE:-Gemfile}.lock" | tail -1)
 gemfile:
   - gemfiles/rspec_2_x.gemfile
   - gemfiles/rspec_3_0.gemfile

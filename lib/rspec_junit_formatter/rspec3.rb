@@ -77,7 +77,20 @@ private
   end
 
   def failure_for(notification)
-    lines = notification.message_lines + [''] + notification.formatted_backtrace
+    lines = notification.fully_formatted_lines(nil, RSpec::Core::Notifications::NullColorizer).map(&:to_s)
+
+    unless lines.first.empty?
+      raise 'Expected first line to be empty'
+    end
+    lines.shift
+
+    indentation = lines.reject(&:empty?).map { |line| line[/^[ \t]*/] }.min
+    lines = lines.map { |line| line.sub(/^#{Regexp.escape indentation}/, '') }
+
+    unless lines.first == notification.description
+      raise 'Expected second line to be description'
+    end
+    lines.shift
 
     strip_diff_colors(lines.join("\n"))
   end

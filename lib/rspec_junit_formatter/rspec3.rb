@@ -77,7 +77,9 @@ private
   end
 
   def failure_for(notification)
-    strip_diff_colors(notification.message_lines.join("\n")) << "\n" << notification.formatted_backtrace.join("\n")
+    lines = notification.message_lines + [''] + notification.formatted_backtrace
+
+    strip_diff_colors(lines.join("\n"))
   end
 
   def exception_for(notification)

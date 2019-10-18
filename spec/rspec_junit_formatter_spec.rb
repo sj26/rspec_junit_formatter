@@ -133,7 +133,11 @@ describe RspecJunitFormatter do
     expect(failed_multiple_testcases.size).to eql(1)
     failed_multiple_testcases.each do |testcase|
       expect(testcase.text).to include("foo")
-      expect(testcase.text).to include("bar")
+      if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new('3.3')
+        expect(testcase.text).to include("bar")
+      else
+        expect(testcase.text).to_not include("bar")
+      end
     end
 
     # it cleans up diffs

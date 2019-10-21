@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   RSpec::Core::Formatters.register self,
     :start,

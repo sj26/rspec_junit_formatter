@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
   attr_reader :started
 

@@ -180,7 +180,7 @@ private
     # We also only want to target the diff hunks because the failure message
     # itself might legitimately contain ansi escape codes.
     #
-    string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
+    string.encode('UTF-8', 'UTF-8', invalid: :replace).sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
   end
 end
 

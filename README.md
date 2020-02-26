@@ -74,18 +74,22 @@ If you like, you can capture the standard output and error streams of each test 
 # spec_helper.rb
 
 RSpec.configure do |config|
-  # register around filter that captures stdout and stderr
-  config.around(:each) do |example|
-    $stdout = StringIO.new
-    $stderr = StringIO.new
+  # Reassigning stdout/stderr has consequences, e.g. invocations of the pry debugger will be ignored. 
+  # So only capture STDOUT/STDERR if this plugin is actually being used
+  if RSpec::Core::ConfigurationOptions.new(ARGV).options[:formatters].any? { |s| s.first == "RspecJunitFormatter" }
+    # register around filter that captures stdout and stderr
+    config.around(:each) do |example|
+      $stdout = StringIO.new
+      $stderr = StringIO.new
 
-    example.run
+      example.run
 
-    example.metadata[:stdout] = $stdout.string
-    example.metadata[:stderr] = $stderr.string
+      example.metadata[:stdout] = $stdout.string
+      example.metadata[:stderr] = $stderr.string
 
-    $stdout = STDOUT
-    $stderr = STDERR
+      $stdout = STDOUT
+      $stderr = STDERR
+    end
   end
 end
 ```

@@ -90,6 +90,8 @@ RSpec.configure do |config|
 end
 ```
 
+Note that this example captures all output from every example all the time, potentially interfering with local debugging. You might like to restrict this to only on CI, or by using [rspec filters](https://relishapp.com/rspec/rspec-core/docs/hooks/filters).
+
 ## Caveats
 
  * XML can only represent a [limited subset of characters][xml-charsets] which excludes null bytes and most control characters. This gem will use character entities where possible and fall back to replacing invalid characters with Ruby-like escape codes otherwise. For example, the null byte becomes `\0`.

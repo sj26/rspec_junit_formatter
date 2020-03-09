@@ -57,9 +57,9 @@ describe RspecJunitFormatter do
     expect(testsuite).not_to be(nil)
 
     expect(testsuite["name"]).to eql("rspec")
-    expect(testsuite["tests"]).to eql("12")
+    expect(testsuite["tests"]).to eql("13")
     expect(testsuite["skipped"]).to eql("1")
-    expect(testsuite["failures"]).to eql("8")
+    expect(testsuite["failures"]).to eql("9")
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)
     expect(testsuite["time"].to_f).to be > 0
@@ -67,7 +67,7 @@ describe RspecJunitFormatter do
 
     # it has some test cases
 
-    expect(testcases.size).to eql(12)
+    expect(testcases.size).to eql(13)
 
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
@@ -101,11 +101,15 @@ describe RspecJunitFormatter do
 
     # it has failed test cases
 
-    expect(failed_testcases.size).to eql(8)
+    expect(failed_testcases.size).to eql(9)
 
     failed_testcases.each do |testcase|
       expect(testcase).not_to be(nil)
-      expect(testcase.element_children.size).to eql(1)
+      if testcase.attributes["name"].value.include?("attachment tag")
+        expect(testcase.element_children.size).to eql(2)
+      else
+        expect(testcase.element_children.size).to eql(1)
+      end
 
       child = testcase.element_children.first
       expect(child.name).to eql("failure")
@@ -151,7 +155,8 @@ describe RspecJunitFormatter do
     expect(doc.xpath("//testcase[contains(@name, 'html')]").first[:name]).to eql(%{some example specs escapes <html tags='correctly' and="such &amp; such">})
 
     # it correctly captures stdout / stderr output
-    expect(doc.xpath("//testcase/system-out").text).to eql("Test\n")
+    stdout = doc.xpath("//testcase/system-out").first
+    expect(stdout.text).to eql("Test\n")
     expect(doc.xpath("//testcase/system-err").text).to eql("Bar\n")
   end
 
@@ -178,6 +183,18 @@ describe RspecJunitFormatter do
     it "has a property with seed info" do
       expect(seed_property["name"]).to eql("seed")
       expect(seed_property["value"]).to eql("12345")
+    end
+  end
+
+  context "when a failed test contains a screenshot" do
+    let(:attachment_testcases) { doc.xpath("/testsuite/testcase[contains(@name, 'some example specs includes an attachment tag')]").first }
+    let(:attachment_tag_regex) { /\[\[ATTACHMENT\|(?<path>.+?)\]\]/ }
+
+    it "has an attachment tag associated to a test failure" do
+      child2 = attachment_testcases.element_children.last
+
+      expect(child2.name).to eq("system-out")
+      expect(child2.text.strip).to match(attachment_tag_regex)
     end
   end
 end

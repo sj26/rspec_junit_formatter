@@ -73,6 +73,7 @@ private
     output << %{ time="#{escape("%.6f" % duration_for(example))}"}
     output << %{>}
     yield if block_given?
+    xml_dump_attachment(example) if screenshot_exists?(example)
     xml_dump_output(example)
     output << %{</testcase>\n}
   end
@@ -89,6 +90,12 @@ private
       output << escape(stderr)
       output << %{</system-err>}
     end
+  end
+
+  def xml_dump_attachment(example)
+    output << %{\n<system-out>}
+    output << %{[[ATTACHMENT|#{escape(screenshot_for(example))}]]}
+    output << %{</system-out>\n}
   end
 
   # Inversion of character range from https://www.w3.org/TR/xml/#charsets

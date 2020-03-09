@@ -9,6 +9,14 @@ RSpec.configure do |config|
     example.metadata[:stdout] = $stdout.string
     example.metadata[:stderr] = $stderr.string
 
+    # register screenshots if failing test attached to it
+    if example.metadata[:has_screenshots]
+      example.metadata[:screenshot] = {
+        html: "tmp/some/path.html",
+        image: "tmp/some/path.png"
+      }
+    end
+
     $stdout = STDOUT
     $stderr = STDERR
   end

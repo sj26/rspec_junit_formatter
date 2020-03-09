@@ -79,4 +79,20 @@ private
   def stderr_for(example)
     example.metadata[:stderr]
   end
+
+  def screenshot_exists?(example)
+    !!example.metadata[:screenshot]
+  end
+
+  def html_screenshot_for(example)
+    example.metadata[:screenshot][:html]
+  end
+
+  def image_screenshot_for(example)
+    example.metadata[:screenshot][:image]
+  end
+
+  def screenshot_for(example)
+    image_screenshot_for(example) || html_screenshot_for(example)
+  end
 end

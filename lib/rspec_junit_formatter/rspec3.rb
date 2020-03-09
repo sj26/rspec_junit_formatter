@@ -132,6 +132,22 @@ private
   def stderr_for(example_notification)
     example_notification.example.metadata[:stderr]
   end
+
+  def screenshot_exists?(example_notification)
+    !!example_notification.example.metadata[:screenshot]
+  end
+
+  def html_screenshot_for(example_notification)
+    example_notification.example.metadata[:screenshot][:html]
+  end
+
+  def image_screenshot_for(example_notification)
+    example_notification.example.metadata[:screenshot][:image]
+  end
+
+  def screenshot_for(example_notification)
+    image_screenshot_for(example_notification) || html_screenshot_for(example_notification)
+  end
 end
 
 # rspec-core 3.0.x forgot to mark this as a module function which causes:

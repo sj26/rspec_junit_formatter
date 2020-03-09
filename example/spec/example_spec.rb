@@ -48,4 +48,8 @@ describe "some example specs" do
     $stdout.puts "Test"
     $stderr.puts "Bar"
   end
+
+  it "includes an attachment tag", has_screenshots: true do
+    expect("attachment").to eql("screenshots")
+  end
 end

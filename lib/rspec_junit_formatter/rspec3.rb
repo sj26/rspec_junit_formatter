@@ -37,6 +37,10 @@ private
     @summary_notification.failure_count
   end
 
+  def errors_outside_of_examples_count
+    @summary_notification.errors_outside_of_examples_count
+  end
+
   def duration
     @summary_notification.duration
   end

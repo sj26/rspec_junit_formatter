@@ -21,6 +21,7 @@ private
     output << %{ skipped="#{pending_count}"}
     output << %{ failures="#{failure_count}"}
     output << %{ errors="0"}
+    output << %{ errors_outside_of_examples="#{errors_outside_of_examples_count}"} if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.6")
     output << %{ time="#{escape("%.6f" % duration)}"}
     output << %{ timestamp="#{escape(started.iso8601)}"}
     output << %{ hostname="#{escape(Socket.gethostname)}"}

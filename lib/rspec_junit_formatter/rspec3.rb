@@ -45,6 +45,10 @@ private
     @examples_notification.notifications
   end
 
+  def error_count
+    reports_errors_outside? ? @summary_notification.errors_outside_of_examples_count : 0
+  end
+
   def result_of(notification)
     notification.example.execution_result.status
   end
@@ -123,6 +127,10 @@ private
     def without_color
       yield
     end
+  end
+
+  def reports_errors_outside?
+    Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3.6")
   end
 
   def stdout_for(example_notification)

@@ -98,10 +98,6 @@ Note that this example captures all output from every example all the time, pote
 
   [xml-charsets]: https://www.w3.org/TR/xml/#charsets
 
-## Roadmap
-
- * It would be nice to split things up into individual test suites, although would this correspond to example groups? The subject? The spec file? Not sure yet.
-
 ## Development
 
 Run the specs with `bundle exec rake`, which uses [Appraisal][appraisal] to run the specs against all supported versions of rspec.

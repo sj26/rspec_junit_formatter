@@ -64,6 +64,10 @@ private
     "#{message}\n#{backtrace.join("\n")}"
   end
 
+  def error_count
+    0
+  end
+
   def find_shared_group(example)
     group_and_parent_groups(example).find { |group| group.metadata[:shared_group_name] }
   end

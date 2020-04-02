@@ -20,7 +20,7 @@ private
     output << %{ tests="#{example_count}"}
     output << %{ skipped="#{pending_count}"}
     output << %{ failures="#{failure_count}"}
-    output << %{ errors="0"}
+    output << %{ errors="#{error_count}"}
     output << %{ time="#{escape("%.6f" % duration)}"}
     output << %{ timestamp="#{escape(started.iso8601)}"}
     output << %{ hostname="#{escape(Socket.gethostname)}"}

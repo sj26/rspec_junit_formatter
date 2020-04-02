@@ -45,6 +45,15 @@ private
     @examples_notification.notifications
   end
 
+  def error_count
+    # Introduced in rspec 3.6
+    if @summary_notification.respond_to?(:errors_outside_of_examples_count)
+      @summary_notification.errors_outside_of_examples_count
+    else
+      0
+    end
+  end
+
   def result_of(notification)
     notification.example.execution_result.status
   end

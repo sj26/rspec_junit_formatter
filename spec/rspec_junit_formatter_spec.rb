@@ -1,43 +1,49 @@
 require "pty"
+require "stringio"
 require "nokogiri"
 require "rspec_junit_formatter"
 
 describe RspecJunitFormatter do
+  TMP_DIR = File.expand_path("../../tmp", __FILE__)
   EXAMPLE_DIR = File.expand_path("../../example", __FILE__)
 
   before(:all) { ENV.delete("TEST_ENV_NUMBER") } # Make sure this doesn't exist by default
 
-  let(:formatter_arguments) { ["--format", "RspecJunitFormatter"] }
+  let(:formatter_output_path) { File.join(TMP_DIR, "junit.xml") }
+  let(:formatter_output) { output; File.read(formatter_output_path) }
+
+  let(:formatter_arguments) { ["--format", "RspecJunitFormatter", "--out", formatter_output_path] }
   let(:extra_arguments) { [] }
 
   let(:color_opt) do
     RSpec.configuration.respond_to?(:color_mode=) ? "--force-color" : "--color"
   end
 
-  def safe_pty(command, directory)
-    sio = StringIO.new
-    begin
-      PTY.spawn(*command, chdir: directory) do |r,w,pid|
-        begin
-          r.each_line { |l| sio.puts(l) }
-        rescue Errno::EIO
-        ensure
-          ::Process.wait pid
-        end
+  def safe_pty(command, **pty_options)
+    output = StringIO.new
+
+    PTY.spawn(*command, **pty_options) do |r, w, pid|
+      begin
+        r.each_line { |line| output.puts(line) }
+      rescue Errno::EIO
+        # Command closed output, or exited
+      ensure
+        Process.wait pid
       end
-    rescue PTY::ChildExited
     end
-    sio.string
+
+    output.string
   end
 
   def execute_example_spec
     command = ["bundle", "exec", "rspec", *formatter_arguments, color_opt, *extra_arguments]
-    safe_pty(command, EXAMPLE_DIR)
+
+    safe_pty(command, chdir: EXAMPLE_DIR)
   end
 
   let(:output) { execute_example_spec }
 
-  let(:doc) { Nokogiri::XML::Document.parse(output) }
+  let(:doc) { Nokogiri::XML::Document.parse(formatter_output) }
 
   let(:testsuite) { doc.xpath("/testsuite").first }
   let(:testcases) { doc.xpath("/testsuite/testcase") }

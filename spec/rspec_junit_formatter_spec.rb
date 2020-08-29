@@ -1,4 +1,5 @@
 require "pty"
+require "stringio"
 require "nokogiri"
 require "rspec_junit_formatter"
 
@@ -14,25 +15,28 @@ describe RspecJunitFormatter do
     RSpec.configuration.respond_to?(:color_mode=) ? "--force-color" : "--color"
   end
 
-  def safe_pty(command, directory)
-    sio = StringIO.new
-    begin
-      PTY.spawn(*command, chdir: directory) do |r,w,pid|
-        begin
-          r.each_line { |l| sio.puts(l) }
-        rescue Errno::EIO
-        ensure
-          ::Process.wait pid
-        end
+  def safe_pty(command, **pty_options)
+    output = StringIO.new
+
+    PTY.spawn(*command, **pty_options) do |r, w, pid|
+      begin
+        r.each_line { |line| output.puts(line) }
+      rescue Errno::EIO
+        # Command closed output, or exited
+      ensure
+        Process.wait pid
       end
-    rescue PTY::ChildExited
     end
-    sio.string
+
+    output.string
   end
 
   def execute_example_spec
     command = ["bundle", "exec", "rspec", *formatter_arguments, color_opt, *extra_arguments]
-    safe_pty(command, EXAMPLE_DIR)
+
+    safe_pty(command, chdir: EXAMPLE_DIR).tap do |output|
+      raise "Command error: #{output}" unless output.start_with? "<"
+    end
   end
 
   let(:output) { execute_example_spec }

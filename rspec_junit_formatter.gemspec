@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.author      = "Samuel Cochran"
   s.email       = "sj26@sj26.com"
-  s.homepage    = "http://github.com/sj26/rspec_junit_formatter"
+  s.homepage    = "https://github.com/sj26/rspec_junit_formatter"
   s.summary     = "RSpec JUnit XML formatter"
   s.description = "RSpec results that your continuous integration service can read."
   s.license     = "MIT"

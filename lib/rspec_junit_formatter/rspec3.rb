@@ -88,7 +88,12 @@ private
   end
 
   def failure_for(notification)
-    strip_diff_colors(notification.message_lines.join("\n")) << "\n" << notification.formatted_backtrace.join("\n")
+    strip_diff_colors(formatted_lines_for(notification).join("\n"))
+  end
+
+  def formatted_lines_for(notification)
+    # drop(2) removes the description (regardless of newlines) and leading blank line
+    notification.fully_formatted_lines(nil, RSpec::Core::Notifications::NullColorizer).drop(2)
   end
 
   def exception_for(notification)

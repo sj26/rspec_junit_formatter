@@ -77,6 +77,7 @@ describe RspecJunitFormatter do
 
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
+      expect(testcase["file"]).to eql("./spec/example_spec.rb")
       expect(testcase["name"]).not_to be_empty
       expect(testcase["time"].to_f).to be > 0
     end

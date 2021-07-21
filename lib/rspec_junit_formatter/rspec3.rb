@@ -63,7 +63,12 @@ private
     while parent_metadata = metadata[:parent_example_group]
       metadata = parent_metadata
     end
-    metadata[:file_path]
+
+    if RSpec.configuration.junit_formatter_file_path_prefix?
+      Pathname.new(RSpec.configuration.junit_formatter_file_path_prefix).join(metadata[:file_path]).to_s
+    else
+      metadata[:file_path]
+    end
   end
 
   def classname_for(notification)

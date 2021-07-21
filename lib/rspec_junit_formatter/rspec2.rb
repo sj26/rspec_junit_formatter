@@ -24,7 +24,12 @@ private
     while meta[:example_group]
       meta = meta[:example_group]
     end
-    meta[:file_path]
+
+    if RSpec.configuration.junit_formatter_file_path_prefix?
+      Pathname.new(RSpec.configuration.junit_formatter_file_path_prefix).join(meta[:file_path]).to_s
+    else
+      meta[:file_path]
+    end
   end
 
   def classname_for(example)

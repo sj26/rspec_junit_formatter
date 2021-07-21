@@ -187,4 +187,22 @@ describe RspecJunitFormatter do
       expect(seed_property["value"]).to eql("12345")
     end
   end
+
+  context "when a junit_formatter_file_path_prefix is set" do
+    around do |example|
+      begin
+        ENV["JUNIT_FORMATTER_FILE_PATH_PREFIX"] = "some/prefix"
+        example.call
+      ensure
+        ENV.delete("JUNIT_FORMATTER_FILE_PATH_PREFIX")
+      end
+    end
+
+    it "prepends the prefix to each file path" do
+      expect(testcases).not_to be_empty
+      testcases.each do |testcase|
+        expect(testcase["file"]).to eql("some/prefix/spec/example_spec.rb")
+      end
+    end
+  end
 end

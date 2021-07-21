@@ -6,6 +6,8 @@ require "time"
 require "rspec/core"
 require "rspec/core/formatters/base_formatter"
 
+::RSpec.configuration.add_setting :junit_formatter_file_path_prefix
+
 # Dumps rspec results as a JUnit XML file.
 # Based on XML schema: http://windyroad.org/dl/Open%20Source/JUnit.xsd
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter

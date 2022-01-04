@@ -8,15 +8,23 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
   [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
+
+  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.4.0...main
+
+## [v0.5.0] - 2022-01-04
 ### Added
 - Added support to read outside error count returned from XML formatter (#86)
 ### Changed
 - Moved to GitHub Actions for CI
 - Test on current Ruby and RSpec versions
 
+  [0.5.0]: https://github.com/sj26/rspec_junit_formatter/compare/v0.4.1...v0.5.0
+
 ## [0.4.1] - 2018-05-26
 ### Fixed
 - Diff ANSI stripping now works for codes with multiple tags, too
+
+  [0.4.1]: https://github.com/sj26/rspec_junit_formatter/compare/v0.4.0...v0.4.1
 
 ## [0.4.0] - 2018-05-26
 ### Added
@@ -24,8 +32,5 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 ### Fixed
 - When RSpec includes a diff in its output, strip out ANSI escape codes used to color it for shell display
 
-  ["Capturing output"]: https://github.com/sj26/rspec_junit_formatter#capturing-output
-
-  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.4.0...main
-  [0.4.1]: https://github.com/sj26/rspec_junit_formatter/compare/v0.4.0...v0.4.1
   [0.4.0]: https://github.com/sj26/rspec_junit_formatter/compare/v0.3.0...v0.4.0
+  ["Capturing output"]: https://github.com/sj26/rspec_junit_formatter#capturing-output

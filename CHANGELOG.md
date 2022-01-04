@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
   [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
+### Added
+- Added support to read outside error count returned from XML formatter (#86)
+### Changed
+- Moved to GitHub Actions for CI
+- Test on current Ruby and RSpec versions
 
 ## [0.4.1] - 2018-05-26
 ### Fixed

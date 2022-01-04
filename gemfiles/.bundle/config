@@ -1,0 +1,3 @@
+---
+BUNDLE_RETRY: "1"
+BUNDLE_WITHOUT: "development,test"

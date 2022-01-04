@@ -5,9 +5,6 @@ rvm:
   - 3.0
   - 2.7
   - 2.6
-  - 2.5
-  - 2.4
-  - 2.3
 before_install:
   - gem install bundler -v $(grep -F "BUNDLED WITH" -A 1 "${BUNDLE_GEMFILE:-Gemfile}.lock" | tail -1)
 gemfile:

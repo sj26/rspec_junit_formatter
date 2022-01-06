@@ -8,10 +8,10 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
   [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
-### Fixed
-- Fixed compatibility with older rubies
+### Changed
+- Restrict to Ruby 2.3+
 
-  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.4.0...main
+  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.5.1...main
 
 ## [v0.5.1] - 2022-01-06
 ### Fixed

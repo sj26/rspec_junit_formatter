@@ -9,7 +9,7 @@
   [jenkins-junit]: https://jenkins.io/doc/pipeline/steps/junit/
   [buildkite-junit]: https://github.com/buildkite/rspec-junit-example
   [circleci-junit]: https://circleci.com/docs/2.0/collect-test-data/
-  [gitlab-junit]: https://docs.gitlab.com/ee/ci/junit_test_reports.html#ruby-example
+  [gitlab-junit]: https://docs.gitlab.com/ee/ci/unit_test_reports.html#ruby-example
 
 ## Usage
 

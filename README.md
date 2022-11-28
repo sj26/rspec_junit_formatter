@@ -42,7 +42,7 @@ Add it to your Gemfile if you're using [Bundler][bundler]. Put it in the same gr
 ```ruby
 group :test do
   gem "rspec"
-  gem "rspec_junit_formatter"
+  gem "rspec_junit_formatter", require: false
 end
 ```
 

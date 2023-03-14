@@ -102,7 +102,7 @@ private
     end
     lines.shift
 
-    strip_diff_colors(lines.join("\n"))
+    strip_diff_colors(lines.join("\n")).gsub(/ +$/, '')
   end
 
   def exception_for(notification)

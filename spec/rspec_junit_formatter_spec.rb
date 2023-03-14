@@ -146,6 +146,13 @@ describe RspecJunitFormatter do
     expect(diff_testcase_failure[:message]).not_to match(/\e | \\e/x)
     expect(diff_testcase_failure.text).not_to match(/\e | \\e/x)
 
+    # it correctly drops trailing spaces
+
+    failed_testcases.each do |testcase|
+      text = testcase.element_children.first.text
+      expect(text).not_to match(/ $/)
+    end
+
     # it correctly replaces illegal characters
 
     expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs replaces naughty \\0 and \\e characters, \\x01 and \\uFFFF too")

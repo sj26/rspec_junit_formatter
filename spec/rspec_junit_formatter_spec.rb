@@ -60,9 +60,9 @@ describe RspecJunitFormatter do
     expect(testsuite).not_to be(nil)
 
     expect(testsuite["name"]).to eql("rspec")
-    expect(testsuite["tests"]).to eql("17")
+    expect(testsuite["tests"]).to eql("19")
     expect(testsuite["skipped"]).to eql("1")
-    expect(testsuite["failures"]).to eql("13")
+    expect(testsuite["failures"]).to eql("15")
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)
     expect(testsuite["time"].to_f).to be > 0
@@ -70,7 +70,7 @@ describe RspecJunitFormatter do
 
     # it has some test cases
 
-    expect(testcases.size).to eql(17)
+    expect(testcases.size).to eql(19)
 
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
@@ -104,7 +104,7 @@ describe RspecJunitFormatter do
 
     # it has failed test cases
 
-    expect(failed_testcases.size).to eql(13)
+    expect(failed_testcases.size).to eql(15)
 
     failed_testcases.each do |testcase|
       expect(testcase).not_to be(nil)
@@ -114,6 +114,7 @@ describe RspecJunitFormatter do
       expect(child.name).to eql("failure")
       expect(child["message"]).not_to be_empty
       expect(child.text.strip).not_to be_empty
+      expect(child.text).not_to match(/ $/)
     end
 
     # it transcodes exception messages before stripping diff colors, preserving
@@ -152,6 +153,13 @@ describe RspecJunitFormatter do
       expect(testcase.text).to include("foo")
       expect(testcase.text).to include("bar")
     end
+
+    whitespace_failure = doc.xpath("//testcase[contains(@name, 'raises a message with trailing spaces')]/failure").first
+    expect(whitespace_failure.text).to match(/^ +first  value\n\n +second\n/)
+
+    aggregate_whitespace_failure = doc.xpath("//testcase[contains(@name, 'aggregate messages with trailing spaces')]/failure").first
+    expect(aggregate_whitespace_failure.text).to include("foo\n", "first\n")
+    expect(aggregate_whitespace_failure.text).to include("bar\n", "second")
 
     # it cleans up diffs
 

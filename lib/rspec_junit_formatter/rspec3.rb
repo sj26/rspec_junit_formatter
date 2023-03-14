@@ -85,11 +85,13 @@ private
   def failure_for(notification)
     exception = exception_for(notification)
 
-    if aggregate_failure?(exception)
+    details = if aggregate_failure?(exception)
       strip_diff_colors(exception.message)
     else
       strip_diff_colors(notification.message_lines.join("\n")) << "\n" << notification.formatted_backtrace.join("\n")
     end
+
+    details.gsub(/ +$/, '')
   end
 
   def exception_for(notification)

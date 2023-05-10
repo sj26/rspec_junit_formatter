@@ -33,7 +33,7 @@ You can use it in combination with other [formatters][rspec-formatters], too:
 rspec --format progress --format RspecJunitFormatter --out rspec.xml
 ```
 
-  [rspec-formatters]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/formatters
+  [rspec-formatters]: https://rspec.info/features/3-12/rspec-core/formatters/
 
 ### Using in your project with Bundler
 
@@ -53,7 +53,7 @@ Put the same arguments as the commands above in [your `.rspec`][rspec-file]:
 --out rspec.xml
 ```
   [bundler]: https://bundler.io
-  [rspec-file]: https://relishapp.com/rspec/rspec-core/v/3-6/docs/configuration/read-command-line-configuration-options-from-files
+  [rspec-file]: https://rspec.info/features/3-12/rspec-core/configuration/read-options-from-file/
 
 ### Parallel tests
 
@@ -90,7 +90,7 @@ RSpec.configure do |config|
 end
 ```
 
-Note that this example captures all output from every example all the time, potentially interfering with local debugging. You might like to restrict this to only on CI, or by using [rspec filters](https://relishapp.com/rspec/rspec-core/docs/hooks/filters).
+Note that this example captures all output from every example all the time, potentially interfering with local debugging. You might like to restrict this to only on CI, or by using [rspec filters](https://rspec.info/features/3-12/rspec-core/hooks/filtering/).
 
 ## Caveats
 

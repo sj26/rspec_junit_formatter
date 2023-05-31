@@ -52,6 +52,7 @@ describe RspecJunitFormatter do
   let(:failed_testcases) { doc.xpath("/testsuite/testcase[failure]") }
   let(:shared_testcases) { doc.xpath("/testsuite/testcase[contains(@name, 'shared example')]") }
   let(:failed_shared_testcases) { doc.xpath("/testsuite/testcase[contains(@name, 'shared example')][failure]") }
+  let(:failed_multiple_testcases) { doc.xpath("/testsuite/testcase[contains(@name, 'multiple')][failure]") }
 
   # Combined into a single example so we don't have to re-run the example rspec
   # process over and over. (We need to change the parameters in later specs so
@@ -63,9 +64,9 @@ describe RspecJunitFormatter do
     expect(testsuite).not_to be(nil)
 
     expect(testsuite["name"]).to eql("rspec")
-    expect(testsuite["tests"]).to eql("12")
+    expect(testsuite["tests"]).to eql("13")
     expect(testsuite["skipped"]).to eql("1")
-    expect(testsuite["failures"]).to eql("8")
+    expect(testsuite["failures"]).to eql("9")
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)
     expect(testsuite["time"].to_f).to be > 0
@@ -73,7 +74,7 @@ describe RspecJunitFormatter do
 
     # it has some test cases
 
-    expect(testcases.size).to eql(12)
+    expect(testcases.size).to eql(13)
 
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
@@ -107,7 +108,7 @@ describe RspecJunitFormatter do
 
     # it has failed test cases
 
-    expect(failed_testcases.size).to eql(8)
+    expect(failed_testcases.size).to eql(9)
 
     failed_testcases.each do |testcase|
       expect(testcase).not_to be(nil)
@@ -134,11 +135,29 @@ describe RspecJunitFormatter do
       expect(testcase.text).to include("shared_examples.rb")
     end
 
+    # it has detail for an aggregate_failures example
+    expect(failed_multiple_testcases.size).to eql(1)
+    failed_multiple_testcases.each do |testcase|
+      expect(testcase.text).to include("foo")
+      if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new('3.3')
+        expect(testcase.text).to include("bar")
+      else
+        expect(testcase.text).to_not include("bar")
+      end
+    end
+
     # it cleans up diffs
 
     diff_testcase_failure = doc.xpath("//testcase[contains(@name, 'diffs')]/failure").first
     expect(diff_testcase_failure[:message]).not_to match(/\e | \\e/x)
     expect(diff_testcase_failure.text).not_to match(/\e | \\e/x)
+
+    # it correctly drops trailing spaces
+
+    failed_testcases.each do |testcase|
+      text = testcase.element_children.first.text
+      expect(text).not_to match(/ $/)
+    end
 
     # it correctly replaces illegal characters
 

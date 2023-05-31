@@ -22,6 +22,11 @@ describe "some example specs" do
     end
   end
 
+  it "should support multiple failures", aggregate_failures: true do
+    expect('foo').to eq 1
+    expect('bar').to eq 2
+  end
+
   it "shows diffs cleanly" do
     expect({a: "b", c: "d"}).to eql({a: 2, c: 4})
   end

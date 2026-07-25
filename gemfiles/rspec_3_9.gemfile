@@ -4,4 +4,8 @@ source "https://rubygems.org"
 
 gem "rspec", "~> 3.9.0"
 
+group :development do
+  gem "bundler-audit", "~> 0.9", require: false
+end
+
 gemspec path: "../"

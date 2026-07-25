@@ -1,27 +1,43 @@
 # frozen_string_literal: true
 
+# Reopens the class documented in lib/rspec_junit_formatter.rb to add the
+# RSpec 3 formatter notification API glue.
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
+  # Subscribe to the RSpec 3 formatter notifications this class needs. RSpec
+  # only calls the methods listed here; anything else defined below is an
+  # internal helper.
   RSpec::Core::Formatters.register self,
-    :start,
-    :stop,
-    :dump_summary
+                                   :start,
+                                   :stop,
+                                   :dump_summary
 
+  # @api public
+  # Called once, before any examples run. Records the start time (used for
+  # both the total duration and the report's timestamp attribute).
+  # @param notification [RSpec::Core::Notifications::StartNotification]
   def start(notification)
     @start_notification = notification
     @started = Time.now
     super
   end
 
+  # @api public
+  # Called once, after all examples have run, with every example's result.
+  # @param notification [RSpec::Core::Notifications::ExamplesNotification]
   def stop(notification)
     @examples_notification = notification
   end
 
+  # @api public
+  # Called once, after {#stop}, with the run's aggregate statistics. This
+  # is where the XML report is actually written to {#output}.
+  # @param notification [RSpec::Core::Notifications::SummaryNotification]
   def dump_summary(notification)
     @summary_notification = notification
     without_color { xml_dump }
   end
 
-private
+  private
 
   attr_reader :started
 
@@ -58,9 +74,13 @@ private
     notification.example.execution_result.status
   end
 
+  # Walks up nested example groups (including shared example groups pulled
+  # in via `it_behaves_like`) to the outermost, top-level group, so
+  # classname_for reports one classname per spec file rather than one per
+  # nested context.
   def example_group_file_path_for(notification)
     metadata = notification.example.metadata[:example_group]
-    while parent_metadata = metadata[:parent_example_group]
+    while (parent_metadata = metadata[:parent_example_group])
       metadata = parent_metadata
     end
     metadata[:file_path]
@@ -68,7 +88,7 @@ private
 
   def classname_for(notification)
     fp = example_group_file_path_for(notification)
-    fp.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(%r{\A\.+|\.+\Z}, "")
+    fp.sub(%r{\.[^/]*\Z}, "").gsub("/", ".").gsub(/\A\.+|\.+\Z/, "")
   end
 
   def duration_for(notification)
@@ -106,32 +126,21 @@ private
       previous = RSpec.configuration.send(key)
       RSpec.configuration.send(:"#{key}=", value)
     else
-      RSpec.configuration.force({key => value})
+      RSpec.configuration.force({ key => value })
     end
     yield
   ensure
     if unset.equal?(force)
       RSpec.configuration.send(:"#{key}=", previous)
     else
-      RSpec.configuration.force({key => force})
+      RSpec.configuration.force({ key => force })
     end
   end
 
-  # Completely gross hack for absolutely forcing off colorising for the
-  # duration of a block.
-  if RSpec.configuration.respond_to?(:color_mode=)
-    def without_color(&block)
-      swap_rspec_configuration(:color_mode, :off, &block)
-    end
-  elsif RSpec.configuration.respond_to?(:color=)
-    def without_color(&block)
-      swap_rspec_configuration(:color, false, &block)
-    end
-  else
-    warn 'rspec_junit_formatter cannot prevent colorising due to an unexpected RSpec.configuration format'
-    def without_color
-      yield
-    end
+  # Forces off colorising for the duration of a block, so that ANSI escape
+  # codes never leak into the XML output.
+  def without_color(&)
+    swap_rspec_configuration(:color_mode, :off, &)
   end
 
   def stdout_for(example_notification)
@@ -140,19 +149,5 @@ private
 
   def stderr_for(example_notification)
     example_notification.example.metadata[:stderr]
-  end
-end
-
-# rspec-core 3.0.x forgot to mark this as a module function which causes:
-#
-#   NoMethodError: undefined method `wrap' for RSpec::Core::Notifications::NullColorizer:Class
-#     .../rspec-core-3.0.4/lib/rspec/core/notifications.rb:229:in `add_shared_group_line'
-#     .../rspec-core-3.0.4/lib/rspec/core/notifications.rb:157:in `message_lines'
-#
-if defined?(RSpec::Core::Notifications::NullColorizer) && RSpec::Core::Notifications::NullColorizer.is_a?(Class) && !RSpec::Core::Notifications::NullColorizer.respond_to?(:wrap)
-  RSpec::Core::Notifications::NullColorizer.class_eval do
-    def self.wrap(*args)
-      new.wrap(*args)
-    end
   end
 end

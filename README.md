@@ -3,7 +3,11 @@
 [![Build results](https://github.com/sj26/rspec_junit_formatter/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sj26/rspec_junit_formatter/actions/workflows/ci.yml?branch=main) 
 [![Gem version](http://img.shields.io/gem/v/rspec_junit_formatter.svg)](https://rubygems.org/gems/rspec_junit_formatter)
 
-[RSpec][rspec] 2 & 3 results that your CI can read. [Jenkins][jenkins-junit], [Buildkite][buildkite-junit], [CircleCI][circleci-junit], [Gitlab][gitlab-junit], and probably more, too.
+[RSpec][rspec] 3 results that your CI can read. [Jenkins][jenkins-junit], [Buildkite][buildkite-junit], [CircleCI][circleci-junit], [Gitlab][gitlab-junit], and probably more, too.
+
+Requires Ruby 3.1+ and rspec-core 3.8+. (Support for RSpec 2, which hasn't been
+maintained since 2013, was dropped in v0.7.0 — pin an older version of this
+gem if you still need it.)
 
   [rspec]: http://rspec.info/
   [jenkins-junit]: https://jenkins.io/doc/pipeline/steps/junit/
@@ -100,9 +104,18 @@ Note that this example captures all output from every example all the time, pote
 
 ## Development
 
-Run the specs with `bundle exec rake`, which uses [Appraisal][appraisal] to run the specs against all supported versions of rspec.
+Run the specs with `bundle exec rspec`, or `bundle exec rake`, which uses [Appraisal][appraisal] to additionally run the specs against every supported version of rspec (see [`Appraisals`](./Appraisals)).
+
+The test suite enforces 100% line and branch coverage via [SimpleCov][simplecov]; run `COVERAGE=1 bundle exec rspec` to check it locally.
+
+Lint with [RuboCop][rubocop]: `bundle exec rubocop`.
+
+Check dependencies for known vulnerabilities with [bundler-audit][bundler-audit]: `bundle exec bundler-audit check --update`.
 
   [appraisal]: https://github.com/thoughtbot/appraisal
+  [simplecov]: https://github.com/simplecov-ruby/simplecov
+  [rubocop]: https://rubocop.org
+  [bundler-audit]: https://github.com/rubysec/bundler-audit
 
 ## Releasing
 

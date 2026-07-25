@@ -1,0 +1,24 @@
+{
+  "blocked": false,
+  "blocked_reason": null,
+  "dependency_changes": [
+    "rspec-core (runtime): >= 2, < 4, != 2.12.0 -> >= 3.0, < 4 (dropped RSpec 2 support)",
+    "nokogiri (dev): ~> 1.8, >= 1.8.2 -> ~> 1.18 (resolves 1.19.4)",
+    "rake (dev): unpinned -> ~> 13.0, moved from gemspec to Gemfile",
+    "appraisal (dev): unpinned -> ~> 2.5, moved from gemspec to Gemfile",
+    "bundler (dev): removed explicit dependency, not needed",
+    "coderay (dev): removed entirely, unused dead dependency",
+    "rspec (Gemfile): unpinned -> ~> 3.13",
+    "rubocop (dev): added, ~> 1.88",
+    "rubocop-rspec (dev): added, ~> 3.10",
+    "simplecov (dev): added, ~> 1.0",
+    "bundler-audit (dev): added, ~> 0.9"
+  ],
+  "security_findings": [
+    "bundler-audit check --update against ruby-advisory-db (1219 advisories, 2026-07-25): no vulnerabilities found in Gemfile.lock or any of the 6 gemfiles/rspec_*.gemfile.lock lockfiles",
+    "No CVEs applicable; added rubygems_mfa_required metadata to the gemspec as a supply-chain hardening measure for future releases",
+    "Removed unused coderay development dependency to reduce dependency surface"
+  ],
+  "coverage_before": 31.64,
+  "coverage_after": 100.0
+}

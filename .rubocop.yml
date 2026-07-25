@@ -1,0 +1,83 @@
+plugins:
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.1
+  SuggestExtensions: false
+  Exclude:
+    - "gemfiles/**/*"
+    - "vendor/**/*"
+    - "pkg/**/*"
+    # A standalone demo project used as a fixture by the acceptance spec,
+    # not part of the gem's own source or style guide.
+    - "example/**/*"
+
+# This gem builds XML by hand, one attribute per line -- that's the
+# readable format here, not a style smell.
+Metrics/MethodLength:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "*.gemspec"
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+# `?"` / `?<` character literals and the %{} / %{...} percent-literals
+# used throughout the XML builder are clearer here than the alternatives.
+Style/CharacterLiteral:
+  Enabled: false
+
+# String#% is used consistently for the handful of format strings here;
+# format()/sprintf() wouldn't be any clearer.
+Style/FormatString:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 200
+
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/NestedGroups:
+  Max: 4
+RSpec/DescribeClass:
+  Exclude:
+    - "spec/rspec_junit_formatter_spec.rb"
+# Both spec files spawn or build small inner RSpec suites purely as XML
+# fixtures for the formatter under test -- their trivial passing/failing/
+# raising/pending examples aren't real specs and don't need real
+# assertions or "real" expect(actual).to matcher(expected) framing.
+RSpec/ExpectActual:
+  Enabled: false
+RSpec/NoExpectationExample:
+  Enabled: false
+# The acceptance spec has one `let` per XPath query on the single XML
+# fixture it generates; splitting the group wouldn't reduce it further.
+RSpec/MultipleMemoizedHelpers:
+  Max: 16
+# `expect(true).to be(true)` &co. are deliberately trivial, always-pass/
+# always-fail fixture examples (see the comment above), not real
+# assertions about equal values.
+RSpec/IdenticalEqualityAssertion:
+  Enabled: false
+# One before(:all) resetting an env var for the whole file, not per-test
+# state that could leak between examples.
+RSpec/BeforeAfterAll:
+  Enabled: false
+# formatter_spec.rb is an intentionally-named companion unit spec next to
+# the rspec_junit_formatter_spec.rb acceptance spec, not a 1:1 mirror of
+# the class's file path.
+RSpec/SpecFilePathFormat:
+  Enabled: false

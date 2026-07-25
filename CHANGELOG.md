@@ -9,7 +9,27 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
-  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.0...main
+  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.7.0...main
+
+## [v0.7.0]
+### Changed
+- Dropped support for RSpec 2 (unmaintained since 2013, and unable to run on
+  currently supported Rubies); `rspec-core` dependency is now `>= 3.0, < 4`
+- Raised `required_ruby_version` to `>= 3.1`
+- CI, and the Appraisal-generated gemfiles, now only cover rspec-core >= 3.8:
+  earlier 3.x releases call a form of `ERB.new` that Ruby has since removed,
+  so they cannot run on Ruby 4.0+ regardless of anything in this gem
+- Modernized development dependencies (nokogiri, rake, rubocop, simplecov)
+### Added
+- Ruby 4.0 to the CI matrix, with a `.ruby-version` pinned to 4.0.6
+- RuboCop-enforced style, and a SimpleCov-enforced 100% test coverage floor
+- A `bundler-audit` CI job
+### Fixed
+- A latent bug in the test suite where a relative `BUNDLE_GEMFILE` (as set by
+  the Appraisal-driven CI matrix) resolved against the wrong working
+  directory in the subprocess used to run the example spec
+
+  [v0.7.0]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.0...v0.7.0
 
 ## [v0.6.0]
 ### Changed

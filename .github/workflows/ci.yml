@@ -3,15 +3,19 @@ name: CI
 on:
   push:
     branches: [ main ]
-  pull_request: 
+  pull_request:
     branches: [ main ]
 
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
-        ruby-version: ["2.6", "2.7", "3.0", "3.1"]
-        rspec-version: ["2_x", "3_0", "3_1", "3_2", "3_3", "3_4", "3_5", "3_6", "3_7", "3_8", "3_9", "3_10"]
+        ruby-version: ["3.1", "3.2", "3.3", "3.4", "4.0"]
+        # rspec-core < 3.8 cannot run on Ruby 4.0+ (it depends on a 3-arg
+        # ERB.new signature Ruby removed), so the matrix only covers 3.8+.
+        # See Appraisals for details.
+        rspec-version: ["3_8", "3_9", "3_10", "3_11", "3_12", "3_13"]
 
     runs-on: ubuntu-latest
 
@@ -19,7 +23,7 @@ jobs:
       BUNDLE_GEMFILE: gemfiles/rspec_${{ matrix.rspec-version }}.gemfile
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - uses: ruby/setup-ruby@v1
       with:
@@ -27,11 +31,61 @@ jobs:
         bundler-cache: true
 
     - name: Run tests
-      run: bundle exec rake
+      run: bundle exec rspec
 
     - name: Upload test artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-artifacts
+        name: test-artifacts-ruby-${{ matrix.ruby-version }}-rspec-${{ matrix.rspec-version }}
         path: tmp
+
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "4.0"
+        bundler-cache: true
+
+    - name: Run tests with coverage enforcement
+      run: bundle exec rspec
+      env:
+        COVERAGE: "1"
+
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: coverage-report
+        path: coverage
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "4.0"
+        bundler-cache: true
+
+    - name: Run RuboCop
+      run: bundle exec rubocop
+
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "4.0"
+        bundler-cache: true
+
+    - name: Run bundler-audit
+      run: bundle exec bundler-audit check --update

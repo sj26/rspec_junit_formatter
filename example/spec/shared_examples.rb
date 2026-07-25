@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples "shared examples" do
   context "in a shared example" do
     it "succeeds" do

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 RSpec.configure do |config|
   # register around filter that captures stderr and stdout
-  config.around(:each) do |example|
+  config.around do |example|
     $stdout = StringIO.new
     $stderr = StringIO.new
 

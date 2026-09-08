@@ -29,9 +29,8 @@ Gem::Specification.new do |s|
   # generated gemfiles under gemfiles/ each pull in just "gemspec path: .."
   # plus a pinned rspec version, so it's the only way to make it available
   # to the spec suite when running against those older rspec versions too.
-  # rubocop:disable Gemspec/DevelopmentDependencies
+  # rubocop:disable-next Gemspec/DevelopmentDependencies
   s.add_development_dependency "nokogiri", "~> 1.18"
-  # rubocop:enable Gemspec/DevelopmentDependencies
 
   s.files        = Dir["lib/**/*", "README.md", "LICENSE"]
   s.require_path = "lib"

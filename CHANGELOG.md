@@ -9,7 +9,15 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
-  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.0...main
+  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.1...main
+
+## [v0.6.1] - 2026-10-21
+### Fixed
+- Include all failure details for examples using `aggregate_failures` ([#108](https://github.com/sj26/rspec_junit_formatter/pull/108))
+### Changed
+- Restore CI and test Ruby 3.2–3.4 and RSpec 3.11–3.13, while retaining existing compatibility coverage ([#111](https://github.com/sj26/rspec_junit_formatter/pull/111))
+
+  [v0.6.1]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.0...v0.6.1
 
 ## [v0.6.0]
 ### Changed

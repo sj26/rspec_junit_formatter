@@ -3,3 +3,4 @@
 /example/tmp/
 /pkg/
 /tmp/
+gemfiles/*.lock

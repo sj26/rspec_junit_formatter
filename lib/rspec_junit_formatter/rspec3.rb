@@ -88,7 +88,13 @@ private
   end
 
   def failure_for(notification)
-    strip_diff_colors(notification.message_lines.join("\n")) << "\n" << notification.formatted_backtrace.join("\n")
+    exception = exception_for(notification)
+
+    if aggregate_failure?(exception)
+      strip_diff_colors(exception.message)
+    else
+      strip_diff_colors(notification.message_lines.join("\n")) << "\n" << notification.formatted_backtrace.join("\n")
+    end
   end
 
   def exception_for(notification)
@@ -140,6 +146,13 @@ private
 
   def stderr_for(example_notification)
     example_notification.example.metadata[:stderr]
+  end
+
+  def aggregate_failure?(exception)
+    # Introduced in rspec 3.3
+    return false unless defined?(RSpec::Expectations::MultipleExpectationsNotMetError)
+
+    exception.is_a?(RSpec::Expectations::MultipleExpectationsNotMetError)
   end
 end
 

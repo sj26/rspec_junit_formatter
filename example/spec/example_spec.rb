@@ -48,4 +48,9 @@ describe "some example specs" do
     $stdout.puts "Test"
     $stderr.puts "Bar"
   end
+
+  it "should support multiple failures", aggregate_failures: true do
+    expect('foo').to eq 1
+    expect('bar').to eq 2
+  end
 end

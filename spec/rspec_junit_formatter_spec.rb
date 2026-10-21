@@ -43,7 +43,7 @@ describe RspecJunitFormatter do
 
   let(:output) { execute_example_spec }
 
-  let(:doc) { Nokogiri::XML::Document.parse(formatter_output) }
+  let(:doc) { Nokogiri::XML::Document.parse(formatter_output) { |config| config.strict } }
 
   let(:testsuite) { doc.xpath("/testsuite").first }
   let(:testcases) { doc.xpath("/testsuite/testcase") }
@@ -154,7 +154,7 @@ describe RspecJunitFormatter do
 
     # it correctly replaces illegal characters
 
-    expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs replaces naughty \\0 and \\e characters, \\x01 and \\uFFFF too")
+    expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs replaces naughty \\0 and \\e characters, \\x01 and \\uFFFF too, and ??invalid??")
 
     # it correctly escapes discouraged characters
 

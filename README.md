@@ -124,6 +124,20 @@ Plain `bundle exec rake` also runs all Appraisals outside CI. Not all historical
 
   [appraisal]: https://github.com/thoughtbot/appraisal
 
+### Tested versus permitted versions
+
+The [gemspec](rspec_junit_formatter.gemspec) permits Ruby >= 2.3 and `rspec-core` >= 2, < 4, excluding 2.12.0. These requirements allow installation; they do not mean every Ruby/RSpec combination is tested or works together.
+
+The CI workflows test these combinations:
+
+| Ruby | RSpec | Bundle |
+| --- | --- | --- |
+| 2.6–3.4 | 3.4–3.13, each minor series | Legacy Appraisals |
+| 2.6–3.1 | 2.14 (`< 2.99`) and 3.0–3.3, each minor series | Legacy Appraisals |
+| 3.4 and 4.0 | Current 3.13, pinned by `Gemfile.lock` | Development |
+
+Ruby 4.0 coverage initially uses only the current RSpec development bundle, not the historical Appraisals. Ruby 2.3–2.5 remain permitted but are not covered by CI. RSpec versions allowed by the gemspec but outside the Appraisal ranges are also untested. Historical RSpec versions below 3.4 are not compatible with Ruby 3.2 or newer. Retaining installation permission does not imply that an end-of-life Ruby still receives upstream security updates.
+
 ## Releasing
 
 Bump the gem version in the gemspec, and commit. Then `bundle exec rake build` to build a gem package, `bundle exec rake install` to install and test it locally, then `bundle exec rake release` to tag and push the commits and gem.

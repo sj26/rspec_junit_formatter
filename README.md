@@ -66,7 +66,47 @@ For use with `parallel_tests`, add `$TEST_ENV_NUMBER` in the output file option 
 --out tmp/rspec<%= ENV["TEST_ENV_NUMBER"] %>.xml
 ```
 
-The formatter includes `$TEST_ENV_NUMBER` in the test suite name within the XML, too.
+The formatter appends `$TEST_ENV_NUMBER` to the test suite name within the XML, too.
+An explicitly set value always wins, including the empty string that `parallel_tests`
+uses for its first worker: `TEST_ENV_NUMBER=""` keeps the name `rspec`.
+
+When `TEST_ENV_NUMBER` is **unset**, the formatter uses the first non-empty value
+from this table, in order:
+
+| Variable | Provider | Native first index |
+| --- | --- | --- |
+| `CI_NODE_INDEX` | [GitLab](https://docs.gitlab.com/ci/variables/predefined_variables/), or a user-supplied CI label | `1` on GitLab |
+| `CIRCLE_NODE_INDEX` | [CircleCI](https://circleci.com/docs/reference/variables/#built-in-environment-variables) | `0` |
+| `SEMAPHORE_JOB_INDEX` | [Semaphore](https://docs.semaphore.io/reference/env-vars#job-index) | `1` |
+| `BUILDKITE_PARALLEL_JOB` | [Buildkite](https://buildkite.com/docs/pipelines/configure/environment-variables#BUILDKITE_PARALLEL_JOB) | `0` |
+| `BITBUCKET_PARALLEL_STEP` | [Bitbucket Pipelines](https://support.atlassian.com/bitbucket-cloud/docs/parallel-step-options/) | `0` |
+
+Values are labels, not test-sharding offsets: they are XML-escaped but otherwise
+unchanged. For example, GitLab's `CI_NODE_INDEX=1` produces `rspec1`, while
+Buildkite's `BUILDKITE_PARALLEL_JOB=0` produces `rspec0`. There is no index
+conversion based on `GITLAB_CI`, and a custom `CI_NODE_INDEX` takes precedence over
+the other CI variables. If all these values are empty or unset, the name stays
+`rspec`; no default `0` is appended.
+
+The old `SEMAPHORE_CURRENT_THREAD` and `SNAP_WORKER_INDEX` variables are not
+detected: [Semaphore Classic was retired in 2023](https://semaphore.io/blog/semaphore-classic-deprecation)
+and [Snap CI in 2017](https://github.com/snap-ci/snap-ci-blog-content/blob/master/posts/2017-02-06-2017-02-06-snap-announcement.md).
+Other runners can set `TEST_ENV_NUMBER` explicitly.
+
+This changes **only the XML suite name**, not the output filename. Continue to
+choose distinct `--out` paths for processes sharing a filesystem. CI indexes are
+unique only within their parallel job group, not across steps, builds, or nested
+`parallel_tests` workers. To combine those reports, set an explicit label that
+includes each relevant dimension, and use it in the filename too. For example,
+inside each `parallel_tests` worker on Buildkite:
+
+```sh
+export TEST_ENV_NUMBER="-${BUILDKITE_STEP_KEY}-${BUILDKITE_PARALLEL_JOB}-${TEST_ENV_NUMBER}"
+bundle exec rspec --format RspecJunitFormatter --out "tmp/rspec${TEST_ENV_NUMBER}.xml"
+```
+
+Use distinct Buildkite step keys for this example; add a build identifier too if
+you combine reports across builds.
 
 ### Capturing output
 

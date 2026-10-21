@@ -9,7 +9,14 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
-  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.7.1...main
+  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.8.0...main
+
+## [v0.8.0] - 2026-10-21
+
+### Added
+- Use GitLab, CircleCI, Semaphore, Buildkite and Bitbucket parallel worker labels in XML suite names when `TEST_ENV_NUMBER` is unset ([#102](https://github.com/sj26/rspec_junit_formatter/issues/102)). Keep native indexes, explicit `TEST_ENV_NUMBER` overrides (including empty), and the unsuffixed `rspec` default. Output filenames are unchanged; see [parallel tests](README.md#parallel-tests) for precedence and nested-worker naming.
+
+  [v0.8.0]: https://github.com/sj26/rspec_junit_formatter/compare/v0.7.1...v0.8.0
 
 ## [v0.7.1] - 2026-10-21
 

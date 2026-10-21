@@ -11,10 +11,20 @@ require "rspec/core/formatters/base_formatter"
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
 private
 
+  def suite_name
+    # parallel_tests deliberately uses an empty label for its first worker.
+    suffix = ENV.fetch("TEST_ENV_NUMBER") do
+      %w[CI_NODE_INDEX CIRCLE_NODE_INDEX SEMAPHORE_JOB_INDEX
+         BUILDKITE_PARALLEL_JOB BITBUCKET_PARALLEL_STEP].map { |name| ENV[name] }.
+        find { |value| value && !value.empty? }
+    end
+    "rspec#{suffix}"
+  end
+
   def xml_dump
     output << %{<?xml version="1.0" encoding="UTF-8"?>\n}
     output << %{<testsuite}
-    output << %{ name="rspec#{escape(ENV["TEST_ENV_NUMBER"].to_s)}"}
+    output << %{ name="#{escape(suite_name)}"}
     output << %{ tests="#{example_count}"}
     output << %{ skipped="#{pending_count}"}
     output << %{ failures="#{failure_count}"}

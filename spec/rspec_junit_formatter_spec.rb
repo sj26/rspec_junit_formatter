@@ -7,7 +7,15 @@ describe RspecJunitFormatter do
   TMP_DIR = File.expand_path("../../tmp", __FILE__)
   EXAMPLE_DIR = File.expand_path("../../example", __FILE__)
 
-  before(:all) { ENV.delete("TEST_ENV_NUMBER") } # Make sure this doesn't exist by default
+  # Isolate the subprocess from worker labels inherited from the test runner's CI.
+  let(:worker_environment) do
+    %w[TEST_ENV_NUMBER GITLAB_CI CI_NODE_INDEX CIRCLE_NODE_INDEX
+       SEMAPHORE_JOB_INDEX SEMAPHORE_CURRENT_THREAD BUILDKITE_PARALLEL_JOB
+       SNAP_WORKER_INDEX BITBUCKET_PARALLEL_STEP].each_with_object({}) do |name, env|
+      env[name] = nil
+    end
+  end
+  let(:extra_environment) { {} }
 
   let(:formatter_output_path) { File.join(TMP_DIR, "junit.xml") }
   let(:formatter_output) { output; File.read(formatter_output_path) }
@@ -32,7 +40,7 @@ describe RspecJunitFormatter do
   end
 
   def execute_example_spec
-    command = ["bundle", "exec", "rspec", *formatter_arguments, "--force-color", *extra_arguments]
+    command = [worker_environment.merge(extra_environment), "bundle", "exec", "rspec", *formatter_arguments, "--force-color", *extra_arguments]
 
     safe_pty(command, chdir: EXAMPLE_DIR)
   end
@@ -188,18 +196,77 @@ describe RspecJunitFormatter do
     expect(doc.xpath("//testcase/system-err").text).to eql("Bar é\n")
   end
 
-  context "when $TEST_ENV_NUMBER is set" do
-    around do |example|
-      begin
-        ENV["TEST_ENV_NUMBER"] = "42"
-        example.call
-      ensure
-        ENV.delete("TEST_ENV_NUMBER")
+  context "with parallel worker labels" do
+    {
+      "CI_NODE_INDEX" => ["1", "rspec1", "8", "rspec8"],
+      "CIRCLE_NODE_INDEX" => ["0", "rspec0", "3", "rspec3"],
+      "SEMAPHORE_JOB_INDEX" => ["1", "rspec1", "6", "rspec6"],
+      "BUILDKITE_PARALLEL_JOB" => ["0", "rspec0", "2", "rspec2"],
+      "BITBUCKET_PARALLEL_STEP" => ["0", "rspec0", "9", "rspec9"],
+    }.each do |variable, values|
+      values.each_slice(2) do |value, name|
+        context "with #{variable}=#{value}" do
+          let(:extra_environment) { {variable => value} }
+
+          it "uses the native index in the XML suite name" do
+            expect(testsuite["name"]).to eql(name)
+          end
+        end
       end
     end
 
-    it "includes $TEST_ENV_NUMBER in the testsuite name" do
-      expect(testsuite["name"]).to eql("rspec42")
+    context "on GitLab" do
+      let(:extra_environment) { {"GITLAB_CI" => "true", "CI_NODE_INDEX" => "1"} }
+
+      it "does not convert the first job's label into a zero-based shard index" do
+        expect(testsuite["name"]).to eql("rspec1")
+      end
+    end
+
+    context "with multiple CI labels" do
+      let(:worker_environment) do
+        super().merge(
+          "CI_NODE_INDEX" => "8", "CIRCLE_NODE_INDEX" => "3",
+          "SEMAPHORE_JOB_INDEX" => "6", "BUILDKITE_PARALLEL_JOB" => "2",
+          "BITBUCKET_PARALLEL_STEP" => "9"
+        )
+      end
+
+      [
+        [{}, "rspec8"],
+        [{"CI_NODE_INDEX" => ""}, "rspec3"],
+        [{"CI_NODE_INDEX" => nil, "CIRCLE_NODE_INDEX" => ""}, "rspec6"],
+        [{"CI_NODE_INDEX" => "", "CIRCLE_NODE_INDEX" => nil, "SEMAPHORE_JOB_INDEX" => ""}, "rspec2"],
+        [{"CI_NODE_INDEX" => nil, "CIRCLE_NODE_INDEX" => "", "SEMAPHORE_JOB_INDEX" => nil, "BUILDKITE_PARALLEL_JOB" => ""}, "rspec9"],
+        [{"CI_NODE_INDEX" => "0"}, "rspec0"],
+        [{"TEST_ENV_NUMBER" => "42"}, "rspec42"],
+        [{"TEST_ENV_NUMBER" => ""}, "rspec"],
+        [{"TEST_ENV_NUMBER" => "0"}, "rspec0"],
+        [{"TEST_ENV_NUMBER" => "node-8-worker-2<&\""}, "rspecnode-8-worker-2<&\""],
+      ].each do |environment, name|
+        context "with overrides #{environment.inspect}" do
+          let(:extra_environment) { environment }
+
+          it "honors the documented precedence and preserves explicit overrides" do
+            expect(testsuite["name"]).to eql(name)
+          end
+        end
+      end
+    end
+
+    context "with empty CI labels and obsolete providers" do
+      let(:extra_environment) do
+        {
+          "CI_NODE_INDEX" => "", "CIRCLE_NODE_INDEX" => "",
+          "SEMAPHORE_JOB_INDEX" => "", "BUILDKITE_PARALLEL_JOB" => "",
+          "BITBUCKET_PARALLEL_STEP" => "",
+          "SEMAPHORE_CURRENT_THREAD" => "4", "SNAP_WORKER_INDEX" => "7"
+        }
+      end
+
+      it "keeps the unsuffixed name rather than inventing a worker index" do
+        expect(testsuite["name"]).to eql("rspec")
+      end
     end
   end
 

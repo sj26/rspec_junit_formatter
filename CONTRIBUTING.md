@@ -49,7 +49,9 @@ traditional gem signatures. Do not publish the same version through both paths.
    outside the checkout. PRs also exercise the package build/install check, but
    their artifacts can never be published by this workflow.
 4. Run again with the same tag and SHA and `publish` checked. After the checks pass,
-   review the commit and package SHA-256 in the build log, then approve the
+   open the run's **Summary** and review the completed `build` job's release notes:
+   exact-version changelog, previous-release compare, target SHA and gem SHA-256.
+   The `release` environment URL links to this summary. Then approve the
    `release` environment deployment. Sam can approve his own run. The publish job
    downloads that run's exact immutable artifact, uses short-lived OIDC credentials,
    and does not check out or build project code.
@@ -57,6 +59,13 @@ traditional gem signatures. Do not publish the same version through both paths.
    GitHub release with the same gem. Check both the
    [RubyGems version](https://rubygems.org/gems/rspec_junit_formatter/versions) and
    [GitHub release](https://github.com/sj26/rspec_junit_formatter/releases).
+
+The summary reads the changelog from the target commit, not current `main`.
+Its compare uses commit SHAs and the highest published stable version below the
+target, excluding the target itself on retries. Notes are retained with the gem
+in the run's artifact and reused when creating the GitHub release; existing release
+bodies are not overwritten. GitHub shows this context in the job summary, not as
+custom text inside the approval dialog. Open the summary before approving.
 
 ### One-time configuration
 

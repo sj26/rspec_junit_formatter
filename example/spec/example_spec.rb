@@ -25,6 +25,10 @@ describe "some example specs" do
     end
   end
 
+  it "raises a message with trailing spaces" do
+    raise "  first  value  \n  \n  second  "
+  end
+
   it "should be pending" do
     skip
   end
@@ -61,5 +65,10 @@ describe "some example specs" do
   it "should support multiple failures", aggregate_failures: true do
     expect('foo').to eq 1
     expect('bar').to eq 2
+  end
+
+  it "supports aggregate messages with trailing spaces", aggregate_failures: true do
+    expect('foo').to eq(1), "foo  \nfirst  "
+    expect('bar').to eq(2), "bar  \nsecond  "
   end
 end

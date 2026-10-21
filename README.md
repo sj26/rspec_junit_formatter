@@ -11,6 +11,18 @@
   [circleci-junit]: https://circleci.com/docs/2.0/collect-test-data/
   [gitlab-junit]: https://docs.gitlab.com/ee/ci/unit_test_reports.html#ruby-example
 
+## Legacy release
+
+**0.6.2 is the final release for older Ruby and RSpec versions.** It retains Ruby >= 2.3 and RSpec >= 2, < 4 (except 2.12.0), with the latest encoding and aggregate failure fixes. See [tested versus permitted versions](#tested-versus-permitted-versions) for coverage and limitations.
+
+The next release will require Ruby >= 3.3 and RSpec >= 3.13. If you must keep an older Ruby **or** an older RSpec, use:
+
+```ruby
+gem "rspec_junit_formatter", "0.6.2", require: false
+```
+
+Then run `bundle update rspec_junit_formatter`. Without Bundler, use `gem install rspec_junit_formatter -v 0.6.2`. Upgrading Ruby alone is not enough if your project must keep an older RSpec.
+
 ## Usage
 
 Install the gem:

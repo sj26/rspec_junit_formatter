@@ -101,9 +101,42 @@ Note that this example captures all output from every example all the time, pote
 
 ## Development
 
-Run the specs with `bundle exec rake`, which uses [Appraisal][appraisal] to run the specs against all supported versions of rspec.
+Use Ruby 3.4 (see [`.ruby-version`](.ruby-version)) for maintenance. Ruby 3.4 is in [normal maintenance](https://www.ruby-lang.org/en/downloads/branches/). This selects the development Ruby without changing the installed gem's requirements. Keep Ruby requirements out of the root Gemfile: Appraisal copies them into legacy Gemfiles.
+
+Install the Bundler version recorded in `Gemfile.lock`, then test the locked development bundle:
+
+```sh
+gem install bundler -v 4.0.23
+bundle install
+bundle exec rake spec
+```
+
+The [development workflow](.github/workflows/development.yml) tests this bundle separately from the [compatibility workflow](.github/workflows/ci.yml). Use `bundle update --all` to refresh the development lockfile.
+
+Legacy bundles are defined by [Appraisal][appraisal] and have separate Gemfiles. Select a compatible Ruby and Bundler, then run an individual bundle without the root lockfile, for example on Ruby 2.6:
+
+```sh
+BUNDLE_GEMFILE=gemfiles/rspec_2_x.gemfile bundle install
+BUNDLE_GEMFILE=gemfiles/rspec_2_x.gemfile bundle exec rake spec
+```
+
+Plain `bundle exec rake` also runs all Appraisals outside CI. Not all historical RSpec versions run on modern Ruby, so use the combinations in the compatibility workflow rather than running all Appraisals on the maintainer Ruby.
 
   [appraisal]: https://github.com/thoughtbot/appraisal
+
+### Tested versus permitted versions
+
+The [gemspec](rspec_junit_formatter.gemspec) permits Ruby >= 2.3 and `rspec-core` >= 2, < 4, excluding 2.12.0. These requirements allow installation; they do not mean every Ruby/RSpec combination is tested or works together.
+
+The CI workflows test these combinations:
+
+| Ruby | RSpec | Bundle |
+| --- | --- | --- |
+| 2.6–3.4 | 3.4–3.13, each minor series | Legacy Appraisals |
+| 2.6–3.1 | 2.14 (`< 2.99`) and 3.0–3.3, each minor series | Legacy Appraisals |
+| 3.4 and 4.0 | Current 3.13, pinned by `Gemfile.lock` | Development |
+
+Ruby 4.0 coverage initially uses only the current RSpec development bundle, not the historical Appraisals. Ruby 2.3–2.5 remain permitted but are not covered by CI. RSpec versions allowed by the gemspec but outside the Appraisal ranges are also untested. Historical RSpec versions below 3.4 are not compatible with Ruby 3.2 or newer. Retaining installation permission does not imply that an end-of-life Ruby still receives upstream security updates.
 
 ## Releasing
 

@@ -45,8 +45,10 @@ describe "some example specs" do
   it_should_behave_like "shared examples"
 
   it "can capture stdout and stderr" do
-    $stdout.puts "Test"
-    $stderr.puts "Bar"
+    $stdout.set_encoding(Encoding::BINARY)
+    $stdout.puts "Test \xFF\0\e".b
+    $stderr.set_encoding(Encoding::ISO_8859_1)
+    $stderr.puts "Bar é"
   end
 
   it "should support multiple failures", aggregate_failures: true do

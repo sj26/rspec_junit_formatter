@@ -46,12 +46,7 @@ private
   end
 
   def error_count
-    # Introduced in rspec 3.6
-    if @summary_notification.respond_to?(:errors_outside_of_examples_count)
-      @summary_notification.errors_outside_of_examples_count
-    else
-      0
-    end
+    @summary_notification.errors_outside_of_examples_count
   end
 
   def result_of(notification)
@@ -125,19 +120,8 @@ private
 
   # Completely gross hack for absolutely forcing off colorising for the
   # duration of a block.
-  if RSpec.configuration.respond_to?(:color_mode=)
-    def without_color(&block)
-      swap_rspec_configuration(:color_mode, :off, &block)
-    end
-  elsif RSpec.configuration.respond_to?(:color=)
-    def without_color(&block)
-      swap_rspec_configuration(:color, false, &block)
-    end
-  else
-    warn 'rspec_junit_formatter cannot prevent colorising due to an unexpected RSpec.configuration format'
-    def without_color
-      yield
-    end
+  def without_color(&block)
+    swap_rspec_configuration(:color_mode, :off, &block)
   end
 
   def stdout_for(example_notification)
@@ -149,23 +133,9 @@ private
   end
 
   def aggregate_failure?(exception)
-    # Introduced in rspec 3.3
+    # rspec-expectations is optional; the formatter only depends on rspec-core.
     return false unless defined?(RSpec::Expectations::MultipleExpectationsNotMetError)
 
     exception.is_a?(RSpec::Expectations::MultipleExpectationsNotMetError)
-  end
-end
-
-# rspec-core 3.0.x forgot to mark this as a module function which causes:
-#
-#   NoMethodError: undefined method `wrap' for RSpec::Core::Notifications::NullColorizer:Class
-#     .../rspec-core-3.0.4/lib/rspec/core/notifications.rb:229:in `add_shared_group_line'
-#     .../rspec-core-3.0.4/lib/rspec/core/notifications.rb:157:in `message_lines'
-#
-if defined?(RSpec::Core::Notifications::NullColorizer) && RSpec::Core::Notifications::NullColorizer.is_a?(Class) && !RSpec::Core::Notifications::NullColorizer.respond_to?(:wrap)
-  RSpec::Core::Notifications::NullColorizer.class_eval do
-    def self.wrap(*args)
-      new.wrap(*args)
-    end
   end
 end

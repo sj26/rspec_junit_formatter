@@ -21,8 +21,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        # Ruby 4.0 initially covers only current RSpec in the root bundle.
-        ruby-version: ["3.4", "4.0"]
+        ruby-version: ["3.3", "3.4", "4.0"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

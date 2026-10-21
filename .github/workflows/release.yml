@@ -82,6 +82,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.commit }}
+          fetch-depth: 0
           persist-credentials: false
       - uses: ruby/setup-ruby@824c0e29fdfc7d689c191c27acc969d2d04b7dd8 # v1
         with:
@@ -95,19 +96,39 @@ jobs:
           SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
           export SOURCE_DATE_EPOCH
           ruby .github/scripts/validate-release.rb
+      - name: Prepare approval context from the release commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: v${{ steps.build.outputs.version }}
+          RELEASE_COMMIT: ${{ needs.resolve.outputs.commit }}
+          RELEASE_SHA256: ${{ steps.build.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --slurp > "$RUNNER_TEMP/releases.json"
+          ruby .github/scripts/release-notes.rb "$RUNNER_TEMP/releases.json" pkg/release-notes.md
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         id: upload
         with:
           name: release-gem
-          path: pkg/*.gem
+          path: |
+            pkg/*.gem
+            pkg/release-notes.md
           if-no-files-found: error
           retention-days: 30
+      - name: Show release review before approval
+        env:
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+        run: |
+          cat pkg/release-notes.md >> "$GITHUB_STEP_SUMMARY"
+          printf '\n[Download the validated gem and these notes](%s)\n' "$ARTIFACT_URL" >> "$GITHUB_STEP_SUMMARY"
 
   publish:
     if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
     needs: [resolve, compatibility, development, build]
     runs-on: ubuntu-24.04
-    environment: release
+    environment:
+      name: release
+      url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#summary
     permissions:
       actions: read
       contents: write
@@ -178,7 +199,7 @@ jobs:
             # The by-tag REST endpoint does not return draft releases.
             release=$(gh api --method POST "repos/$GH_REPO/releases" \
               -f tag_name="$TAG" -f target_commitish="$COMMIT" -F draft=true \
-              -f name="$TAG" -f body="RubyGems package SHA-256: $SHA256. Built and tested from $COMMIT.")
+              -f name="$TAG" -F body=@pkg/release-notes.md)
           fi
           asset=$(jq -r --arg name "$name" '.assets[] | select(.name == $name) | .id' <<< "$release")
           if [[ -n "$asset" ]]; then

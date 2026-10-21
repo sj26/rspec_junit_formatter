@@ -175,9 +175,10 @@ jobs:
           releases=$(gh api "repos/$GH_REPO/releases" --paginate --slurp)
           release=$(jq -c --arg tag "$TAG" '[.[][] | select(.tag_name == $tag)] | first // empty' <<< "$releases")
           if [[ -z "$release" ]]; then
-            gh release create "$TAG" --verify-tag --target "$COMMIT" --draft \
-              --title "$TAG" --notes "RubyGems package SHA-256: $SHA256. Built and tested from $COMMIT."
-            release=$(gh api "repos/$GH_REPO/releases/tags/$TAG")
+            # The by-tag REST endpoint does not return draft releases.
+            release=$(gh api --method POST "repos/$GH_REPO/releases" \
+              -f tag_name="$TAG" -f target_commitish="$COMMIT" -F draft=true \
+              -f name="$TAG" -f body="RubyGems package SHA-256: $SHA256. Built and tested from $COMMIT.")
           fi
           asset=$(jq -r --arg name "$name" '.assets[] | select(.name == $name) | .id' <<< "$release")
           if [[ -n "$asset" ]]; then

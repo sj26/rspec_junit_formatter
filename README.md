@@ -101,7 +101,26 @@ Note that this example captures all output from every example all the time, pote
 
 ## Development
 
-Run the specs with `bundle exec rake`, which uses [Appraisal][appraisal] to run the specs against all supported versions of rspec.
+Use Ruby 3.4 (see [`.ruby-version`](.ruby-version)) for maintenance. Ruby 3.4 is in [normal maintenance](https://www.ruby-lang.org/en/downloads/branches/). This selects the development Ruby without changing the installed gem's requirements. Keep Ruby requirements out of the root Gemfile: Appraisal copies them into legacy Gemfiles.
+
+Install the Bundler version recorded in `Gemfile.lock`, then test the locked development bundle:
+
+```sh
+gem install bundler -v 4.0.23
+bundle install
+bundle exec rake spec
+```
+
+The [development workflow](.github/workflows/development.yml) tests this bundle separately from the [compatibility workflow](.github/workflows/ci.yml). Use `bundle update --all` to refresh the development lockfile.
+
+Legacy bundles are defined by [Appraisal][appraisal] and have separate Gemfiles. Select a compatible Ruby and Bundler, then run an individual bundle without the root lockfile, for example on Ruby 2.6:
+
+```sh
+BUNDLE_GEMFILE=gemfiles/rspec_2_x.gemfile bundle install
+BUNDLE_GEMFILE=gemfiles/rspec_2_x.gemfile bundle exec rake spec
+```
+
+Plain `bundle exec rake` also runs all Appraisals outside CI. Not all historical RSpec versions run on modern Ruby, so use the combinations in the compatibility workflow rather than running all Appraisals on the maintainer Ruby.
 
   [appraisal]: https://github.com/thoughtbot/appraisal
 

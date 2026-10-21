@@ -9,8 +9,6 @@ require "rspec/core/formatters/base_formatter"
 # Dumps rspec results as a JUnit XML file.
 # Based on XML schema: http://windyroad.org/dl/Open%20Source/JUnit.xsd
 class RSpecJUnitFormatter < RSpec::Core::Formatters::BaseFormatter
-  # rspec 2 and 3 implements are in separate files.
-
 private
 
   def xml_dump
@@ -188,8 +186,4 @@ end
 
 RspecJunitFormatter = RSpecJUnitFormatter
 
-if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new("3")
-  require "rspec_junit_formatter/rspec3"
-else
-  require "rspec_junit_formatter/rspec2"
-end
+require "rspec_junit_formatter/rspec3"

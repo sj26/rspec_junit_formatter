@@ -15,10 +15,6 @@ describe RspecJunitFormatter do
   let(:formatter_arguments) { ["--format", "RspecJunitFormatter", "--out", formatter_output_path] }
   let(:extra_arguments) { [] }
 
-  let(:color_opt) do
-    RSpec.configuration.respond_to?(:color_mode=) ? "--force-color" : "--color"
-  end
-
   def safe_pty(command, **pty_options)
     output = StringIO.new
 
@@ -36,7 +32,7 @@ describe RspecJunitFormatter do
   end
 
   def execute_example_spec
-    command = ["bundle", "exec", "rspec", *formatter_arguments, color_opt, *extra_arguments]
+    command = ["bundle", "exec", "rspec", *formatter_arguments, "--force-color", *extra_arguments]
 
     safe_pty(command, chdir: EXAMPLE_DIR)
   end
@@ -139,11 +135,7 @@ describe RspecJunitFormatter do
     expect(failed_multiple_testcases.size).to eql(1)
     failed_multiple_testcases.each do |testcase|
       expect(testcase.text).to include("foo")
-      if Gem::Version.new(RSpec::Core::Version::STRING) >= Gem::Version.new('3.3')
-        expect(testcase.text).to include("bar")
-      else
-        expect(testcase.text).to_not include("bar")
-      end
+      expect(testcase.text).to include("bar")
     end
 
     # it cleans up diffs

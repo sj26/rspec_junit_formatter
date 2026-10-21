@@ -15,11 +15,7 @@ describe "some example specs" do
   end
 
   it "should be pending" do
-    if defined? skip
-      skip
-    else
-      pending
-    end
+    skip
   end
 
   it "shows diffs cleanly" do

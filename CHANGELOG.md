@@ -9,7 +9,21 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
-  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.1...main
+  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.2...main
+
+## [v0.6.2] - 2026-10-21
+
+This is the final legacy-compatible release. It retains Ruby >= 2.3 and RSpec >= 2, < 4 (except 2.12.0), including the aggregate failure fix from 0.6.1. Projects staying on Ruby < 3.3 or RSpec < 3.13 should pin `gem "rspec_junit_formatter", "0.6.2"` before the next release raises those minimum versions. Permitted versions are not all tested; see the [compatibility table](README.md#tested-versus-permitted-versions).
+
+### Fixed
+- Replace invalid byte sequences and undefined UTF-8 conversions with U+FFFD (`�`) in XML escaping ([#105](https://github.com/sj26/rspec_junit_formatter/pull/105), [#116](https://github.com/sj26/rspec_junit_formatter/pull/116)). This does not fix encoding errors before XML escaping, including [#113](https://github.com/sj26/rspec_junit_formatter/issues/113), or malformed backtraces rejected by RSpec.
+
+### Changed
+- Refresh the development bundle and test current RSpec on Ruby 3.4 and 4.0, without changing runtime requirements.
+- Publish unsigned, validated gem artifacts through approved GitHub Actions and RubyGems trusted publishing ([#117](https://github.com/sj26/rspec_junit_formatter/pull/117)).
+- Check for GitHub Actions updates weekly with Dependabot ([#106](https://github.com/sj26/rspec_junit_formatter/pull/106)).
+
+  [v0.6.2]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.1...v0.6.2
 
 ## [v0.6.1] - 2026-10-21
 ### Fixed

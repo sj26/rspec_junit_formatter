@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rspec_junit_formatter (0.7.1)
+    rspec_junit_formatter (0.8.0)
       rspec-core (>= 3.13, < 4)
 
 GEM

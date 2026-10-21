@@ -60,9 +60,9 @@ describe RspecJunitFormatter do
     expect(testsuite).not_to be(nil)
 
     expect(testsuite["name"]).to eql("rspec")
-    expect(testsuite["tests"]).to eql("13")
+    expect(testsuite["tests"]).to eql("17")
     expect(testsuite["skipped"]).to eql("1")
-    expect(testsuite["failures"]).to eql("9")
+    expect(testsuite["failures"]).to eql("13")
     expect(testsuite["errors"]).to eql("0")
     expect(Time.parse(testsuite["timestamp"])).to be_within(60).of(Time.now)
     expect(testsuite["time"].to_f).to be > 0
@@ -70,7 +70,7 @@ describe RspecJunitFormatter do
 
     # it has some test cases
 
-    expect(testcases.size).to eql(13)
+    expect(testcases.size).to eql(17)
 
     testcases.each do |testcase|
       expect(testcase["classname"]).to eql("spec.example_spec")
@@ -104,7 +104,7 @@ describe RspecJunitFormatter do
 
     # it has failed test cases
 
-    expect(failed_testcases.size).to eql(9)
+    expect(failed_testcases.size).to eql(13)
 
     failed_testcases.each do |testcase|
       expect(testcase).not_to be(nil)
@@ -114,7 +114,22 @@ describe RspecJunitFormatter do
       expect(child.name).to eql("failure")
       expect(child["message"]).not_to be_empty
       expect(child.text.strip).not_to be_empty
-      expect(child.text.strip).not_to match(/\\e\[(?:\d+;?)+m/)
+    end
+
+    # it transcodes exception messages before stripping diff colors, preserving
+    # legitimate ANSI codes and illegal XML characters as visible escapes
+
+    {
+      "invalid UTF-8" => "before\uFFFDafter\\0\\e[31mred\\e[0m",
+      "binary" => "before\uFFFDafter",
+      "ISO-8859-1" => "café",
+      "UTF-16LE" => "café",
+    }.each do |encoding, message|
+      failure = doc.at_xpath("//testcase[contains(@name, 'reports #{encoding} exception messages')]/failure")
+      expect(failure["type"]).to eql("RuntimeError")
+      expect(failure["message"]).to eql(message)
+      # RSpec replaces invalid bytes with '?' before supplying message_lines.
+      expect(failure.text).to include(message.gsub("\uFFFD", "?"))
     end
 
     # it has shared test cases which list both the inclusion and included files

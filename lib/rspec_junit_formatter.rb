@@ -162,9 +162,13 @@ private
     ?>.freeze => "&gt;".freeze,
   ).freeze
 
+  def utf8(text)
+    text.to_s.encode(Encoding::UTF_8, invalid: :replace, undef: :replace, replace: "\uFFFD")
+  end
+
   def escape(text)
     # Make sure it's utf-8, replace illegal characters with ruby-like escapes, and replace special and discouraged characters with entities
-    text.to_s.encode(Encoding::UTF_8, invalid: :replace, undef: :replace, replace: "\uFFFD").gsub(ILLEGAL_REGEXP, ILLEGAL_REPLACEMENT).gsub(DISCOURAGED_REGEXP, DISCOURAGED_REPLACEMENTS)
+    utf8(text).gsub(ILLEGAL_REGEXP, ILLEGAL_REPLACEMENT).gsub(DISCOURAGED_REGEXP, DISCOURAGED_REPLACEMENTS)
   end
 
   STRIP_DIFF_COLORS_BLOCK_REGEXP = /^ ( [ ]* ) Diff: (?: \e\[ 0 m )? (?: \n \1 \e\[ \d+ (?: ; \d+ )* m .* )* /x
@@ -180,7 +184,9 @@ private
     # We also only want to target the diff hunks because the failure message
     # itself might legitimately contain ansi escape codes.
     #
-    string.sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
+    # Transcode before matching: the original message may be invalid or use an
+    # encoding incompatible with the ASCII regexp. Leave XML escaping until later.
+    utf8(string).sub(STRIP_DIFF_COLORS_BLOCK_REGEXP) { |match| match.gsub(STRIP_DIFF_COLORS_CODES_REGEXP, "".freeze) }
   end
 end
 

@@ -14,6 +14,17 @@ describe "some example specs" do
     raise ArgumentError
   end
 
+  {
+    "invalid UTF-8" => "before\xF0after\0\e[31mred\e[0m".freeze,
+    "binary" => "before\x9Cafter".b.freeze,
+    "ISO-8859-1" => "café".encode(Encoding::ISO_8859_1).freeze,
+    "UTF-16LE" => "café".encode(Encoding::UTF_16LE).freeze,
+  }.each do |encoding, message|
+    it "reports #{encoding} exception messages" do
+      raise message
+    end
+  end
+
   it "should be pending" do
     skip
   end

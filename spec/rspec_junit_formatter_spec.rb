@@ -43,7 +43,7 @@ describe RspecJunitFormatter do
 
   let(:output) { execute_example_spec }
 
-  let(:doc) { Nokogiri::XML::Document.parse(formatter_output) }
+  let(:doc) { Nokogiri::XML::Document.parse(formatter_output) { |config| config.strict } }
 
   let(:testsuite) { doc.xpath("/testsuite").first }
   let(:testcases) { doc.xpath("/testsuite/testcase") }

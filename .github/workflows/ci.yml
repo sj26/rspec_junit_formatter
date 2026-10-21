@@ -19,32 +19,9 @@ jobs:
     name: "test (ruby: ${{ matrix.ruby-version}}, rspec: ${{ matrix.rspec-version }})"
     strategy:
       matrix:
-        ruby-version: ["2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4"]
-        rspec-version: ["3_4", "3_5", "3_6", "3_7", "3_8", "3_9", "3_10", "3_11", "3_12", "3_13"]
-        include:
-          # NOTE: ruby 3.2+ is not compatible with rspec < 3.4
-          - { ruby-version: "2.6", rspec-version: "2_x" }
-          - { ruby-version: "2.7", rspec-version: "2_x" }
-          - { ruby-version: "3.0", rspec-version: "2_x" }
-          - { ruby-version: "3.1", rspec-version: "2_x" }
-          - { ruby-version: "2.6", rspec-version: "3_0" }
-          - { ruby-version: "2.7", rspec-version: "3_0" }
-          - { ruby-version: "3.0", rspec-version: "3_0" }
-          - { ruby-version: "3.1", rspec-version: "3_0" }
-          - { ruby-version: "2.6", rspec-version: "3_1" }
-          - { ruby-version: "2.7", rspec-version: "3_1" }
-          - { ruby-version: "3.0", rspec-version: "3_1" }
-          - { ruby-version: "3.1", rspec-version: "3_1" }
-          - { ruby-version: "2.6", rspec-version: "3_2" }
-          - { ruby-version: "2.7", rspec-version: "3_2" }
-          - { ruby-version: "3.0", rspec-version: "3_2" }
-          - { ruby-version: "3.1", rspec-version: "3_2" }
-          - { ruby-version: "2.6", rspec-version: "3_3" }
-          - { ruby-version: "2.7", rspec-version: "3_3" }
-          - { ruby-version: "3.0", rspec-version: "3_3" }
-          - { ruby-version: "3.1", rspec-version: "3_3" }
+        ruby-version: ["3.3", "3.4", "4.0"]
+        rspec-version: ["3_13"]
 
-    # Older supported Rubies are not available on Ubuntu 26.04.
     runs-on: ubuntu-22.04
 
     env:

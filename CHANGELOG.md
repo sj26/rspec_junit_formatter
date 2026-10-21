@@ -9,7 +9,19 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
-  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.2...main
+  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.7.0...main
+
+## [v0.7.0] - 2026-10-21
+
+### Changed
+- Require Ruby >= 3.3 and RSpec >= 3.13, < 4. Ruby 3.3 remains supported during upstream security maintenance; Ruby 3.2 and earlier are end-of-life. RSpec 3.13 is the maintained stable minor series; RSpec 4 prereleases remain excluded. See the [support policy and upgrade instructions](README.md#supported-versions-and-legacy-upgrades).
+- Test Ruby 3.3, 3.4 and 4.0 with both the locked development bundle and the RSpec 3.13 Appraisal.
+- **Use [0.6.2](https://rubygems.org/gems/rspec_junit_formatter/versions/0.6.2) if you must keep an older Ruby or RSpec:** pin `gem "rspec_junit_formatter", "0.6.2", require: false` and run `bundle update rspec_junit_formatter`. The RSpec dependency floor prevents older RSpec projects on newer Ruby from selecting 0.7.0.
+
+### Fixed
+- Create GitHub draft releases without looking them up through the published-release-by-tag endpoint ([#120](https://github.com/sj26/rspec_junit_formatter/pull/120)).
+
+  [v0.7.0]: https://github.com/sj26/rspec_junit_formatter/compare/v0.6.2...v0.7.0
 
 ## [v0.6.2] - 2026-10-21
 

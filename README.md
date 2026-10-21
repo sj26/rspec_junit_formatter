@@ -3,7 +3,7 @@
 [![Build results](https://github.com/sj26/rspec_junit_formatter/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sj26/rspec_junit_formatter/actions/workflows/ci.yml?branch=main) 
 [![Gem version](http://img.shields.io/gem/v/rspec_junit_formatter.svg)](https://rubygems.org/gems/rspec_junit_formatter)
 
-[RSpec][rspec] 2 & 3 results that your CI can read. [Jenkins][jenkins-junit], [Buildkite][buildkite-junit], [CircleCI][circleci-junit], [Gitlab][gitlab-junit], and probably more, too.
+[RSpec][rspec] 3 results that your CI can read. [Jenkins][jenkins-junit], [Buildkite][buildkite-junit], [CircleCI][circleci-junit], [Gitlab][gitlab-junit], and probably more, too.
 
   [rspec]: http://rspec.info/
   [jenkins-junit]: https://jenkins.io/doc/pipeline/steps/junit/
@@ -11,17 +11,21 @@
   [circleci-junit]: https://circleci.com/docs/2.0/collect-test-data/
   [gitlab-junit]: https://docs.gitlab.com/ee/ci/unit_test_reports.html#ruby-example
 
-## Legacy release
+## Supported versions and legacy upgrades
 
-**0.6.2 is the final release for older Ruby and RSpec versions.** It retains Ruby >= 2.3 and RSpec >= 2, < 4 (except 2.12.0), with the latest encoding and aggregate failure fixes. See [tested versus permitted versions](#tested-versus-permitted-versions) for coverage and limitations.
+**0.7.0 requires Ruby >= 3.3 and RSpec >= 3.13, < 4.** We support upstream-maintained stable Ruby branches, including security maintenance, and the maintained stable RSpec minor series. As of October 2026, [Ruby 3.3 is security-maintained and Ruby 3.4/4.0 are normally maintained](https://www.ruby-lang.org/en/downloads/branches/). [RSpec supports only the latest major/minor pair](https://rspec.info/blog/2024/11/introducing-the-monorepo/), currently 3.13; RSpec 4 prereleases are not supported. Future minor releases may raise these minimums when upstream maintenance ends.
 
-The next release will require Ruby >= 3.3 and RSpec >= 3.13. If you must keep an older Ruby **or** an older RSpec, use:
+**[0.6.2](https://rubygems.org/gems/rspec_junit_formatter/versions/0.6.2) is the final legacy-compatible release.** It retains Ruby >= 2.3 and RSpec >= 2, < 4 (except 2.12.0), including the encoding and aggregate failure fixes. See its [compatibility table](https://github.com/sj26/rspec_junit_formatter/blob/v0.6.2/README.md#tested-versus-permitted-versions) for tested combinations and limitations. It does not make end-of-life Ruby or RSpec versions maintained again.
+
+If you must keep an older Ruby **or** an older RSpec, use:
 
 ```ruby
 gem "rspec_junit_formatter", "0.6.2", require: false
 ```
 
 Then run `bundle update rspec_junit_formatter`. Without Bundler, use `gem install rspec_junit_formatter -v 0.6.2`. Upgrading Ruby alone is not enough if your project must keep an older RSpec.
+
+To use 0.7.0, upgrade Ruby to a maintained version and RSpec to 3.13, remove the legacy formatter pin, and run `bundle update rspec rspec_junit_formatter`. Both Ruby and `rspec-core` requirements are recorded in the package so dependency resolution can retain 0.6.2 for older environments.
 
 ## Usage
 
@@ -113,7 +117,7 @@ Note that this example captures all output from every example all the time, pote
 
 ## Development
 
-Use Ruby 3.4 (see [`.ruby-version`](.ruby-version)) for maintenance. Ruby 3.4 is in [normal maintenance](https://www.ruby-lang.org/en/downloads/branches/). This selects the development Ruby without changing the installed gem's requirements. Keep Ruby requirements out of the root Gemfile: Appraisal copies them into legacy Gemfiles.
+Use Ruby 3.4 (see [`.ruby-version`](.ruby-version)) for maintenance. This selects the development Ruby; the installed gem's minimum is defined in the [gemspec](rspec_junit_formatter.gemspec).
 
 Install the Bundler version recorded in `Gemfile.lock`, then test the locked development bundle:
 
@@ -125,30 +129,29 @@ bundle exec rake spec
 
 The [development workflow](.github/workflows/development.yml) tests this bundle separately from the [compatibility workflow](.github/workflows/ci.yml). Use `bundle update --all` to refresh the development lockfile.
 
-Legacy bundles are defined by [Appraisal][appraisal] and have separate Gemfiles. Select a compatible Ruby and Bundler, then run an individual bundle without the root lockfile, for example on Ruby 2.6:
+The supported RSpec series is also defined by [Appraisal][appraisal], with a separate Gemfile to test dependency resolution without the root lockfile:
 
 ```sh
-BUNDLE_GEMFILE=gemfiles/rspec_2_x.gemfile bundle install
-BUNDLE_GEMFILE=gemfiles/rspec_2_x.gemfile bundle exec rake spec
+BUNDLE_GEMFILE=gemfiles/rspec_3_13.gemfile bundle install
+BUNDLE_GEMFILE=gemfiles/rspec_3_13.gemfile bundle exec rake spec
 ```
 
-Plain `bundle exec rake` also runs all Appraisals outside CI. Not all historical RSpec versions run on modern Ruby, so use the combinations in the compatibility workflow rather than running all Appraisals on the maintainer Ruby.
+Plain `bundle exec rake` also runs the Appraisals outside CI.
 
   [appraisal]: https://github.com/thoughtbot/appraisal
 
 ### Tested versus permitted versions
 
-The [gemspec](rspec_junit_formatter.gemspec) permits Ruby >= 2.3 and `rspec-core` >= 2, < 4, excluding 2.12.0. These requirements allow installation; they do not mean every Ruby/RSpec combination is tested or works together.
+The [gemspec](rspec_junit_formatter.gemspec) permits Ruby >= 3.3 and `rspec-core` >= 3.13, < 4. These requirements allow installation; future versions are not automatically tested or supported.
 
 The CI workflows test these combinations:
 
 | Ruby | RSpec | Bundle |
 | --- | --- | --- |
-| 2.6–3.4 | 3.4–3.13, each minor series | Legacy Appraisals |
-| 2.6–3.1 | 2.14 (`< 2.99`) and 3.0–3.3, each minor series | Legacy Appraisals |
-| 3.4 and 4.0 | Current 3.13, pinned by `Gemfile.lock` | Development |
+| 3.3, 3.4 and 4.0 | 3.13, latest patch | Appraisal |
+| 3.3, 3.4 and 4.0 | 3.13, pinned by `Gemfile.lock` | Development |
 
-Ruby 4.0 coverage initially uses only the current RSpec development bundle, not the historical Appraisals. Ruby 2.3–2.5 remain permitted but are not covered by CI. RSpec versions allowed by the gemspec but outside the Appraisal ranges are also untested. Historical RSpec versions below 3.4 are not compatible with Ruby 3.2 or newer. Retaining installation permission does not imply that an end-of-life Ruby still receives upstream security updates.
+CI selects the latest patch of each listed Ruby branch. The locked bundle currently uses RSpec 3.13.2 and rspec-core 3.13.6. Older Ruby and RSpec combinations remain available in [0.6.2](https://github.com/sj26/rspec_junit_formatter/tree/v0.6.2), not in the current test matrix.
 
 ## Releasing
 

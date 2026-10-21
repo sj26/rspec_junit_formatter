@@ -154,7 +154,7 @@ describe RspecJunitFormatter do
 
     # it correctly replaces illegal characters
 
-    expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs replaces naughty \\0 and \\e characters, \\x01 and \\uFFFF too, and ?")
+    expect(doc.xpath("//testcase[contains(@name, 'naughty')]").first[:name]).to eql("some example specs replaces naughty \\0 and \\e characters, \\x01 and \\uFFFF too, and \uFFFD")
 
     # it correctly escapes discouraged characters
 
@@ -169,7 +169,7 @@ describe RspecJunitFormatter do
     expect(doc.xpath("//testcase[contains(@name, 'html')]").first[:name]).to eql(%{some example specs escapes <html tags='correctly' and="such &amp; such">})
 
     # it correctly captures stdout / stderr output
-    expect(doc.xpath("//testcase/system-out").text).to eql("Test ?\\0\\e\n")
+    expect(doc.xpath("//testcase/system-out").text).to eql("Test \uFFFD\\0\\e\n")
     expect(doc.xpath("//testcase/system-err").text).to eql("Bar é\n")
   end
 

@@ -95,7 +95,7 @@ Note that this example captures all output from every example all the time, pote
 ## Caveats
 
  * XML can only represent a [limited subset of characters][xml-charsets] which excludes null bytes and most control characters. This gem will use character entities where possible and fall back to replacing invalid characters with Ruby-like escape codes otherwise. For example, the null byte becomes `\0`.
- * When converting report text to UTF-8 for XML output, invalid byte sequences and characters with no UTF-8 conversion are replaced with `??invalid??`. The formatter uses each string's declared encoding; it does not guess the encoding of binary data.
+ * When converting report text to UTF-8 for XML output, invalid byte sequences and characters with no UTF-8 conversion are replaced with `�` (U+FFFD REPLACEMENT CHARACTER). The formatter uses each string's declared encoding; it does not guess the encoding of binary data.
 
   [xml-charsets]: https://www.w3.org/TR/xml/#charsets
 

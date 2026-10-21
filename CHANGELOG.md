@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
+### Fixed
+- Transcode failure messages to UTF-8 before stripping RSpec diff colors, replacing invalid bytes and undefined conversions with U+FFFD (`�`) instead of crashing ([#113](https://github.com/sj26/rspec_junit_formatter/issues/113)).
+
   [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.7.0...main
 
 ## [v0.7.0] - 2026-10-21

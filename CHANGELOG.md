@@ -9,10 +9,15 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
+  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.7.1...main
+
+## [v0.7.1] - 2026-10-21
+
 ### Fixed
 - Transcode failure messages to UTF-8 before stripping RSpec diff colors, replacing invalid bytes and undefined conversions with U+FFFD (`�`) instead of crashing ([#113](https://github.com/sj26/rspec_junit_formatter/issues/113)).
+- Strip trailing spaces from ordinary and aggregate failure detail lines, preserving indentation and internal spaces ([#125](https://github.com/sj26/rspec_junit_formatter/pull/125)).
 
-  [Unreleased]: https://github.com/sj26/rspec_junit_formatter/compare/v0.7.0...main
+  [v0.7.1]: https://github.com/sj26/rspec_junit_formatter/compare/v0.7.0...v0.7.1
 
 ## [v0.7.0] - 2026-10-21
 

@@ -84,7 +84,7 @@ jobs:
           ref: ${{ needs.resolve.outputs.commit }}
           fetch-depth: 0
           persist-credentials: false
-      - uses: ruby/setup-ruby@824c0e29fdfc7d689c191c27acc969d2d04b7dd8 # v1
+      - uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1
         with:
           ruby-version: '3.4'
       - name: Build and validate the installed gem without signing keys
@@ -142,7 +142,7 @@ jobs:
       GH_REPO: ${{ github.repository }}
     steps:
       # No checkout, bundle install, project scripts, or gem installation here.
-      - uses: ruby/setup-ruby@824c0e29fdfc7d689c191c27acc969d2d04b7dd8 # v1
+      - uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1
         with:
           ruby-version: '3.4'
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8

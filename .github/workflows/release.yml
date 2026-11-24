@@ -1,219 +1,57 @@
 name: Release
 
 on:
-  pull_request:
-    branches: [main]
   workflow_dispatch:
     inputs:
       tag:
         description: Existing version tag (vX.Y.Z), already merged into main
         required: true
         type: string
-      commit:
-        description: Full 40-character commit SHA the tag must resolve to
-        required: true
-        type: string
-      publish:
-        description: Publish after validation and environment approval (false is a dry run)
-        type: boolean
-        default: false
 
-permissions:
-  contents: read
+permissions: {}
 
-# Never interrupt a push in progress. Re-runs must compare the existing bytes.
-concurrency:
-  group: release-${{ github.event_name == 'workflow_dispatch' && 'publish' || github.ref }}
-  cancel-in-progress: false
+concurrency: release
 
 jobs:
-  resolve:
-    runs-on: ubuntu-24.04
-    outputs:
-      commit: ${{ steps.resolve.outputs.commit }}
-      tag-object: ${{ steps.resolve.outputs.tag-object }}
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-          persist-credentials: false
-      - id: resolve
-        env:
-          TAG: ${{ inputs.tag }}
-          COMMIT: ${{ inputs.commit }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then
-            echo "commit=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          [[ "$GITHUB_REF" == refs/heads/main ]]
-          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]
-          test "$(git rev-parse "refs/tags/$TAG^{commit}")" = "$COMMIT"
-          git merge-base --is-ancestor "$COMMIT" "$GITHUB_SHA"
-          echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
-          echo "tag-object=$(git rev-parse "refs/tags/$TAG")" >> "$GITHUB_OUTPUT"
-
-  compatibility:
-    if: github.event_name == 'workflow_dispatch'
-    needs: resolve
-    uses: ./.github/workflows/ci.yml
-    with:
-      ref: ${{ needs.resolve.outputs.commit }}
-
-  development:
-    if: github.event_name == 'workflow_dispatch'
-    needs: resolve
-    uses: ./.github/workflows/development.yml
-    with:
-      ref: ${{ needs.resolve.outputs.commit }}
-
-  build:
-    needs: resolve
-    runs-on: ubuntu-24.04
-    outputs:
-      version: ${{ steps.build.outputs.version }}
-      sha256: ${{ steps.build.outputs.sha256 }}
-      artifact-id: ${{ steps.upload.outputs.artifact-id }}
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          ref: ${{ needs.resolve.outputs.commit }}
-          fetch-depth: 0
-          persist-credentials: false
-      - uses: ruby/setup-ruby@v1.336.0
-        with:
-          ruby-version: '3.4'
-      - name: Build and validate the installed gem without signing keys
-        id: build
-        env:
-          RELEASE_TAG: ${{ inputs.tag }}
-        run: |
-          set -euo pipefail
-          SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
-          export SOURCE_DATE_EPOCH
-          ruby .github/scripts/validate-release.rb
-      - name: Prepare approval context from the release commit
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: v${{ steps.build.outputs.version }}
-          RELEASE_COMMIT: ${{ needs.resolve.outputs.commit }}
-          RELEASE_SHA256: ${{ steps.build.outputs.sha256 }}
-        run: |
-          set -euo pipefail
-          gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --slurp > "$RUNNER_TEMP/releases.json"
-          ruby .github/scripts/release-notes.rb "$RUNNER_TEMP/releases.json" pkg/release-notes.md
-      - uses: actions/upload-artifact@v7.0.2
-        id: upload
-        with:
-          name: release-gem
-          path: |
-            pkg/*.gem
-            pkg/release-notes.md
-          if-no-files-found: error
-          retention-days: 30
-      - name: Show release review before approval
-        env:
-          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
-        run: |
-          cat pkg/release-notes.md >> "$GITHUB_STEP_SUMMARY"
-          printf '\n[Download the validated gem and these notes](%s)\n' "$ARTIFACT_URL" >> "$GITHUB_STEP_SUMMARY"
-
   publish:
-    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
-    needs: [resolve, compatibility, development, build]
+    if: github.repository == 'sj26/rspec_junit_formatter' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    environment:
-      name: release
-      url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#summary
+    environment: release
     permissions:
-      actions: read
       contents: write
       id-token: write
     env:
       TAG: ${{ inputs.tag }}
-      COMMIT: ${{ needs.resolve.outputs.commit }}
-      TAG_OBJECT: ${{ needs.resolve.outputs.tag-object }}
-      VERSION: ${{ needs.build.outputs.version }}
-      SHA256: ${{ needs.build.outputs.sha256 }}
-      GH_REPO: ${{ github.repository }}
+
     steps:
-      # No checkout, bundle install, project scripts, or gem installation here.
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
       - uses: ruby/setup-ruby@v1.336.0
         with:
           ruby-version: '3.4'
-      - uses: actions/download-artifact@v8.0.2
-        with:
-          artifact-ids: ${{ needs.build.outputs.artifact-id }}
-          path: pkg
-          merge-multiple: true
-      - name: Verify artifact, tag, and any existing RubyGems version
-        id: existing
-        env:
-          GH_TOKEN: ${{ github.token }}
+          bundler: none
+
+      - name: Build the tagged gem without the development bundle
         run: |
-          set -euo pipefail
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          [[ "$SHA256" =~ ^[0-9a-f]{64}$ ]]
-          test "$TAG" = "v$VERSION"
-          test "$(gh api "repos/$GH_REPO/git/ref/tags/$TAG" --jq .object.sha)" = "$TAG_OBJECT"
-          file="pkg/rspec_junit_formatter-$VERSION.gem"
-          echo "$SHA256  $file" | sha256sum --check --strict
-          status=$(curl --silent --show-error --output version.json --write-out '%{http_code}' \
-            "https://rubygems.org/api/v2/rubygems/rspec_junit_formatter/versions/$VERSION.json")
-          case "$status" in
-            200)
-              test "$(jq -r .sha version.json)" = "$SHA256"
-              echo 'exists=true' >> "$GITHUB_OUTPUT"
-              ;;
-            404) echo 'exists=false' >> "$GITHUB_OUTPUT" ;;
-            *) echo "Unexpected RubyGems HTTP status: $status" >&2; exit 1 ;;
-          esac
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          commit=$(git rev-parse --verify "refs/tags/$TAG^{commit}")
+          git merge-base --is-ancestor "$commit" "$GITHUB_SHA"
+          git checkout --detach "$commit"
+          version=$(ruby -e 'puts Gem::Specification.load("rspec_junit_formatter.gemspec").version')
+          test "$TAG" = "v$version"
+          gem build rspec_junit_formatter.gemspec
+
       - uses: rubygems/configure-rubygems-credentials@v2.1.0
-        if: steps.existing.outputs.exists == 'false'
         with:
           trusted-publisher: true
-      - name: Push the validated bytes
-        if: steps.existing.outputs.exists == 'false'
-        run: gem push --host https://rubygems.org "pkg/rspec_junit_formatter-$VERSION.gem"
-      - name: Verify RubyGems serves the exact artifact
-        run: |
-          set -euo pipefail
-          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 10 \
-            "https://rubygems.org/downloads/rspec_junit_formatter-$VERSION.gem" -o published.gem
-          cmp "pkg/rspec_junit_formatter-$VERSION.gem" published.gem
-      - name: Publish the same bytes on GitHub (resume an incomplete draft safely)
+
+      - name: Publish the gem and create the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
-          test "$(gh api "repos/$GH_REPO/git/ref/tags/$TAG" --jq .object.sha)" = "$TAG_OBJECT"
-          name="rspec_junit_formatter-$VERSION.gem"
-          # Distinguish a missing release from authentication/network failures.
-          releases=$(gh api "repos/$GH_REPO/releases" --paginate --slurp)
-          release=$(jq -c --arg tag "$TAG" '[.[][] | select(.tag_name == $tag)] | first // empty' <<< "$releases")
-          if [[ -z "$release" ]]; then
-            # The by-tag REST endpoint does not return draft releases.
-            release=$(gh api --method POST "repos/$GH_REPO/releases" \
-              -f tag_name="$TAG" -f target_commitish="$COMMIT" -F draft=true \
-              -f name="$TAG" -F body=@pkg/release-notes.md)
-          fi
-          asset=$(jq -r --arg name "$name" '.assets[] | select(.name == $name) | .id' <<< "$release")
-          if [[ -n "$asset" ]]; then
-            gh api -H 'Accept: application/octet-stream' "repos/$GH_REPO/releases/assets/$asset" > github.gem
-            cmp "pkg/$name" github.gem
-          else
-            test "$(jq -r .draft <<< "$release")" = true
-            gh release upload "$TAG" "pkg/$name"
-            gh release download "$TAG" --pattern "$name" --dir verify
-            cmp "pkg/$name" "verify/$name"
-          fi
-          if [[ "$(jq -r .draft <<< "$release")" == true ]]; then
-            gh release edit "$TAG" --draft=false
-          fi
-      - name: Remove short-lived credentials
-        if: always()
-        run: rm -f "$HOME/.gem/credentials"
+          file="rspec_junit_formatter-${TAG#v}.gem"
+          gem push --host https://rubygems.org "$file"
+          gh release create "$TAG" "$file" --verify-tag --generate-notes

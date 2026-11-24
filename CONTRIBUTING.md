@@ -16,6 +16,8 @@ bundle exec rake spec
 
 The [development workflow](.github/workflows/development.yml) tests this bundle separately from the [compatibility workflow](.github/workflows/ci.yml). Use `bundle update --all` to refresh the development lockfile.
 
+When changing an action reference, run [`gh actions-lock`](https://github.com/github/gh-actions-lock) and include the generated lockfile in the PR.
+
 The supported RSpec series is also defined by [Appraisal](https://github.com/thoughtbot/appraisal), with a separate Gemfile to test dependency resolution without the root lockfile:
 
 ```sh

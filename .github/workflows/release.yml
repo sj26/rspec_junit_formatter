@@ -33,7 +33,7 @@ jobs:
       commit: ${{ steps.resolve.outputs.commit }}
       tag-object: ${{ steps.resolve.outputs.tag-object }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
@@ -79,12 +79,12 @@ jobs:
       sha256: ${{ steps.build.outputs.sha256 }}
       artifact-id: ${{ steps.upload.outputs.artifact-id }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ needs.resolve.outputs.commit }}
           fetch-depth: 0
           persist-credentials: false
-      - uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1
+      - uses: ruby/setup-ruby@v1.336.0
         with:
           ruby-version: '3.4'
       - name: Build and validate the installed gem without signing keys
@@ -106,7 +106,7 @@ jobs:
           set -euo pipefail
           gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --slurp > "$RUNNER_TEMP/releases.json"
           ruby .github/scripts/release-notes.rb "$RUNNER_TEMP/releases.json" pkg/release-notes.md
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+      - uses: actions/upload-artifact@v7.0.2
         id: upload
         with:
           name: release-gem
@@ -142,10 +142,10 @@ jobs:
       GH_REPO: ${{ github.repository }}
     steps:
       # No checkout, bundle install, project scripts, or gem installation here.
-      - uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1
+      - uses: ruby/setup-ruby@v1.336.0
         with:
           ruby-version: '3.4'
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+      - uses: actions/download-artifact@v8.0.2
         with:
           artifact-ids: ${{ needs.build.outputs.artifact-id }}
           path: pkg
@@ -172,7 +172,7 @@ jobs:
             404) echo 'exists=false' >> "$GITHUB_OUTPUT" ;;
             *) echo "Unexpected RubyGems HTTP status: $status" >&2; exit 1 ;;
           esac
-      - uses: rubygems/configure-rubygems-credentials@dc5a8d8553e6ee01fc26761a49e99e733d17954a # v2.1.0
+      - uses: rubygems/configure-rubygems-credentials@v2.1.0
         if: steps.existing.outputs.exists == 'false'
         with:
           trusted-publisher: true

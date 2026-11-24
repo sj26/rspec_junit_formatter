@@ -18,7 +18,7 @@ jobs:
         ruby-version: ["3.3", "3.4", "4.0"]
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: ruby/setup-ruby@v1.336.0
+      - uses: ruby/setup-ruby@v1.343.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true

@@ -35,39 +35,15 @@ CI tests Ruby 3.3, 3.4 and 4.0 with RSpec 3.13, using both the locked developmen
 
 Releases use the [Release workflow](https://github.com/sj26/rspec_junit_formatter/actions/workflows/release.yml)
 and [RubyGems trusted publishing](https://guides.rubygems.org/trusted-publishing/).
-GitHub Actions builds **unsigned gems**: it needs no personal signing key, persistent
-RubyGems API key, or maintainer machine. Local `bundle exec rake build`, `install`,
-and `release` tasks remain available; local releases may retain the maintainer's
-traditional gem signatures. Do not publish the same version through both paths.
+No persistent RubyGems API key or signing key is needed.
 
-1. Bump the gemspec version and update the changelog in a reviewed PR. Merge it
-   into `main`. Use a new stable `X.Y.Z` version; never reuse a published version.
-2. Tag that exact commit as `vX.Y.Z` and push the tag. Record its full commit SHA
-   with `git rev-parse 'vX.Y.Z^{commit}'`. Pushing a tag alone does not publish.
-3. Run the Release workflow **from `main`**, supplying the tag and full SHA. Leave
-   `publish` unchecked for validation only. It checks tag/version/commit agreement
-   and main ancestry, runs the compatibility and development suites at that SHA,
-   builds the gem, rejects embedded signatures, and tests a clean installation
-   outside the checkout. PRs also exercise the package build/install check, but
-   their artifacts can never be published by this workflow.
-4. Run again with the same tag and SHA and `publish` checked. After the checks pass,
-   open the run's **Summary** and review the completed `build` job's release notes:
-   exact-version changelog, previous-release compare, target SHA and gem SHA-256.
-   The `release` environment URL links to this summary. Then approve the
-   `release` environment deployment. Sam can approve his own run. The publish job
-   downloads that run's exact immutable artifact, uses short-lived OIDC credentials,
-   and does not check out or build project code.
-5. The workflow verifies that RubyGems serves identical bytes before publishing a
-   GitHub release with the same gem. Check both the
-   [RubyGems version](https://rubygems.org/gems/rspec_junit_formatter/versions) and
-   [GitHub release](https://github.com/sj26/rspec_junit_formatter/releases).
-
-The summary reads the changelog from the target commit, not current `main`.
-Its compare uses commit SHAs and the highest published stable version below the
-target, excluding the target itself on retries. Notes are retained with the gem
-in the run's artifact and reused when creating the GitHub release; existing release
-bodies are not overwritten. GitHub shows this context in the job summary, not as
-custom text inside the approval dialog. Open the summary before approving.
+1. Bump the gemspec to a new stable version, update the changelog, and merge the PR.
+2. After CI passes on the release commit on `main`, push a `vX.Y.Z` tag for that commit.
+3. Run **Release** from `main` with that tag and approve the `release` environment.
+   The job checks that the tag is on `main` and matches the gem version, builds the
+   gem without the development bundle, and publishes it to RubyGems and as a
+   [GitHub release asset](https://github.com/sj26/rspec_junit_formatter/releases).
+   Pushing a tag alone does not publish.
 
 ### One-time configuration
 
@@ -90,18 +66,7 @@ RubyGems API key or personal signing key to repository secrets.
 
 ### Recovery
 
-Release runs are serialized and never auto-cancel an active publication. If a
-push succeeds but a later step fails, **re-run failed jobs in the original run**
-while its `release-gem` artifact is retained (30 days). This reuses the validated
-bytes and requires environment approval again. An existing RubyGems version is
-accepted only if its SHA-256 matches, and its downloaded bytes must also match.
-An incomplete GitHub draft can resume; an existing asset must match byte-for-byte
-and is never overwritten. A published GitHub release missing its gem fails closed
-and needs manual inspection rather than silently changing a public release.
-
-If the tag moved, a digest differs, or the original artifact expired, stop and
-investigate. Do not delete/recreate tags, yank/re-push gems, or overwrite release
-assets to force a retry. A fresh run rebuilds and is safe only if it reproduces
-the same bytes; otherwise recover the original artifact or use a new version
-through the normal review process. Validation-only runs do not test OIDC exchange
-or publication; only a real, explicitly approved new release can prove those paths.
+If the GitHub release step fails after RubyGems accepts the gem, download the
+[published gem](https://rubygems.org/gems/rspec_junit_formatter/versions) and use it
+to finish the GitHub release for the existing tag. Do not rerun the push, move the
+tag, or overwrite an existing asset.

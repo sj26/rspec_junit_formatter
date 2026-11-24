@@ -1,0 +1,37 @@
+name: Merge development dependency updates
+
+on:
+  workflow_run:
+    workflows: [Development]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  merge:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.actor.login == 'dependabot[bot]' &&
+      github.event.workflow_run.pull_requests[0].number != null
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # This job has write access. Do not check out or run PR code.
+      - name: Merge a tested development lockfile update
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          pr=$(gh pr view "$PR_NUMBER" --json author,baseRefName,files,headRefOid,isCrossRepository,state)
+          if jq -e --arg sha "$HEAD_SHA" '
+            .state == "OPEN" and .author.is_bot and .author.login == "app/dependabot" and
+            .baseRefName == "main" and .isCrossRepository == false and .headRefOid == $sha and
+            (.files | map([.path, .changeType])) == [["Gemfile.lock", "MODIFIED"]]
+          ' <<< "$pr" >/dev/null; then
+            gh pr merge "$PR_NUMBER" --squash --match-head-commit "$HEAD_SHA"
+          fi

@@ -7,6 +7,7 @@ workflows:
         - 'actions/checkout@v7.0.1'
         - 'actions/upload-artifact@v7.0.2'
         - 'ruby/setup-ruby@v1.336.0'
+    '.github/workflows/dependabot.yml': []
     '.github/workflows/development.yml':
         - 'actions/checkout@v7.0.1'
         - 'ruby/setup-ruby@v1.336.0'
